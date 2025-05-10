@@ -1,0 +1,4 @@
+laravel new apparel_indo_dashboard
+npm install
+php artisan migrate
+composer run dev
