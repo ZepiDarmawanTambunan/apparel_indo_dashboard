@@ -1,5 +1,4 @@
 import type { PageProps } from '@inertiajs/core';
-import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
@@ -18,14 +17,26 @@ export interface SharedData extends PageProps {
     ziggy: Config & { location: string };
 }
 
+// Disesuaikan dengan model User
 export interface User {
     id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
+    nama: string;
+    pegawai_id: string;
     created_at: string;
     updated_at: string;
+    pegawai?: Pegawai | null; // relasi
+}
+
+// Disesuaikan dengan model Pegawai
+export interface Pegawai {
+    id_pegawai: string;
+    nama: string;
+    email: string | null;
+    nohp: string | null;
+    jabatan: string | null;
+    created_at: string;
+    updated_at: string;
+    user?: User | null;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

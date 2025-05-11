@@ -7,3 +7,6 @@ git remote add origin https://github.com/ZepiDarmawanTambunan/apparel_indo_dashb
 git add .
 git commit -m "first commit"
 git push origin master
+composer require spatie/laravel-permission
+php artisan vendor:publish --tag="permission-migrations"
+php artisan migrate

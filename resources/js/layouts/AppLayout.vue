@@ -1,24 +1,22 @@
 <template>
-  <div class="h-screen bg-gray-100">
+  <div class="bg-gray-100">
     <div class="flex flex-col">
-      <header class="bg-blue-600 text-white p-4">
-        <slot name="header"></slot>
-      </header>
+        <AppHeader />
 
       <main class="flex-1 p-4">
-        <slot></slot>
+        <slot />
       </main>
+
+    <footer class="bg-white shadow px-4 py-6">
+        <div class="text-center text-gray-600 text-sm space-y-1">
+            <div>&copy; 2023 Apparel Indo. All rights reserved.</div>
+            <!-- <div>Developed by <a href="https://your-portfolio-link.com" target="_blank" class="text-blue-600 hover:underline">Zepi Darmawan</a></div> -->
+        </div>
+    </footer>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-    import { defineProps } from 'vue';
-    import type { BreadcrumbItemType } from '@/types';
-
-    const props = withDefaults(defineProps<{
-            breadcrumbs?: BreadcrumbItemType[];
-        }>(),
-        { breadcrumbs: () => [], }
-    );
+    import AppHeader from '@/components/AppHeader.vue';
 </script>
