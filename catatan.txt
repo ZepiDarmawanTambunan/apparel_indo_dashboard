@@ -2,3 +2,8 @@ laravel new apparel_indo_dashboard
 npm install
 php artisan migrate
 composer run dev
+git init
+git remote add origin https://github.com/ZepiDarmawanTambunan/apparel_indo_dashboard.git
+git add .
+git commit -m "first commit"
+git push origin master
