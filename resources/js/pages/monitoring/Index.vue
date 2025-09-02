@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 const menus = [
-  { label: 'Tgl Deadline', icon: '📅', route: 'monitoring.deadline' },
+  { label: 'Monitoring Order', icon: '📅', route: 'monitoring.order' },
   { label: 'Tracking Order', icon: '📦', route: 'monitoring.tracking' },
 ];
 </script>

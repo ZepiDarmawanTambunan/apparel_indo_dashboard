@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -14,6 +16,8 @@ defineProps<{
     canResetPassword: boolean;
 }>();
 
+const showPassword = ref(false)
+
 const form = useForm({
     pegawai_id: '',
     password: '',
@@ -28,7 +32,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Login" description="Masukkan ID Pegawai dan password">
+    <AuthLayout title="Apparel Indo" description="Masukkan ID Pegawai dan password">
         <Head title="Log in" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
@@ -47,7 +51,6 @@ const submit = () => {
                         :tabindex="1"
                         autocomplete="username"
                         v-model="form.pegawai_id"
-                        placeholder="Contoh: P0001"
                     />
                     <InputError :message="form.errors.pegawai_id" />
                 </div>
@@ -59,16 +62,27 @@ const submit = () => {
                             Forgot password?
                         </TextLink>
                     </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        required
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        v-model="form.password"
-                        placeholder="Password"
-                    />
-                    <InputError :message="form.errors.password" />
+                    <div class="relative">
+                        <Input
+                            :type="showPassword ? 'text' : 'password'"
+                            id="password"
+                            required
+                            :tabindex="2"
+                            autocomplete="current-password"
+                            v-model="form.password"
+                            class="w-full pr-10 text-[12px] border border-black focus:border-black focus:ring-0"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3"
+                            @click="showPassword = !showPassword"
+                            tabindex="-1"
+                        >
+                            <Eye v-if="!showPassword" class="w-5 h-5 text-gray-500" />
+                            <EyeOff v-else class="w-5 h-5 text-gray-500" />
+                        </button>
+                        <InputError :message="form.errors.password" />
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between">

@@ -16,13 +16,13 @@ return new class extends Migration
             $table->string('produk_id');
             $table->unsignedInteger('harga_before');
             $table->unsignedInteger('harga_after');
-            $table->date('tgl');
-            $table->boolean('status')->default(true);
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
+            $table->dateTime('tgl_jam');
+            $table->string('user_nama')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->softDeletes();
 
             $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

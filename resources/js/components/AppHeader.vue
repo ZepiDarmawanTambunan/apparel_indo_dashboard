@@ -1,3 +1,52 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { onClickOutside } from '@vueuse/core';
+import { Link, router, usePage } from '@inertiajs/vue3';
+
+// Tipe Pegawai
+interface Pegawai {
+  id: number;
+  nama: string;
+  jabatan?: string;
+  foto_url?: string;
+}
+
+// Tipe User dari auth
+interface AuthUser {
+  id: number;
+  nama: string;
+  role?: string;
+  pegawai?: Pegawai | null;
+}
+
+interface PageProps {
+  auth: {
+    user: AuthUser;
+  };
+  [key: string]: unknown;
+}
+
+// Ambil props dari Inertia
+const page = usePage<PageProps>();
+const user = computed(() => page.props.auth.user);
+
+// Dropdown
+const dropdownOpen = ref(false);
+const dropdownRef = ref(null);
+
+onClickOutside(dropdownRef, () => {
+  dropdownOpen.value = false;
+});
+
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value;
+};
+
+const handleLogout = () => {
+  router.flushAll(); // Optional, tergantung kebutuhan logout
+};
+</script>
+
 <template>
   <header class="bg-white shadow px-4 py-6">
     <div class="flex items-center justify-between">
@@ -17,9 +66,9 @@
           class="flex items-center gap-3 cursor-pointer select-none"
           @click="toggleDropdown"
         >
-          <span class="text-gray-800 font-medium hidden sm:block">{{ user }}</span>
+          <span class="text-gray-800 font-medium hidden sm:block">{{ user.nama }}</span>
           <img
-            src="/images/user.png"
+            :src="user.pegawai?.foto_url || '/images/user.png'"
             alt="User"
             class="h-10 w-10 rounded-full object-cover border"
           />
@@ -32,10 +81,10 @@
             class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg ring-1 ring-black/10 z-50"
           >
             <Link
-              href="/akun"
+              :href="route('profil.index')"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition cursor-pointer"
             >
-              Akun
+              Profil
             </Link>
             <Link method="post" :href="route('logout')" @click="handleLogout" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition cursor-pointer">
                 Logout
@@ -47,39 +96,13 @@
   </header>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { onClickOutside } from '@vueuse/core';
-import { Link, router } from '@inertiajs/vue3';
-import type { User } from '@/types';
-
-const page = usePage();
-const user = computed(() => page.props.auth?.user?.nama ?? 'Pengguna');
-
-const dropdownOpen = ref(false);
-const dropdownRef = ref(null);
-
-onClickOutside(dropdownRef, () => {
-  dropdownOpen.value = false;
-});
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value;
-};
-
-const handleLogout = () => {
-    router.flushAll();
-};
-</script>
-
 <style scoped>
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 0.2s ease;
-    }
-    .fade-enter-from,
-    .fade-leave-to {
-        opacity: 0;
-    }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

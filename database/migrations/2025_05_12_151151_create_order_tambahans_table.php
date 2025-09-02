@@ -21,12 +21,14 @@ return new class extends Migration
             $table->unsignedInteger('qty')->default(0);
             $table->unsignedInteger('harga')->default(0);
             $table->unsignedBigInteger('total')->default(0);
-            $table->unsignedBigInteger('user_id');
+            $table->string('user_nama')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('order_detail_id')->references('id')->on('order_detail')->onDelete('cascade');
             $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('set null');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

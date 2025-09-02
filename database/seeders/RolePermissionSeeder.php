@@ -32,7 +32,12 @@ class RolePermissionSeeder extends Seeder
         Permission::create(['name' => 'akses-dashboard']);
         Permission::create(['name' => 'akses-monitoring']);
         Permission::create(['name' => 'akses-order']);
+        Permission::create(['name' => 'buat-order']);
+        Permission::create(['name' => 'edit-order']);
+        Permission::create(['name' => 'batal-order']);
         Permission::create(['name' => 'akses-pembayaran']);
+        Permission::create(['name' => 'buat-pembayaran']);
+        Permission::create(['name' => 'batal-pembayaran']);
         Permission::create(['name' => 'akses-invoice']);
         Permission::create(['name' => 'akses-desain-data']);
         Permission::create(['name' => 'akses-cetak-print']);
@@ -51,7 +56,12 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
+            'buat-order',
+            'edit-order',
+            'batal-order',
             'akses-pembayaran',
+            'buat-pembayaran',
+            'batal-pembayaran',
             'akses-invoice',
             'akses-desain-data',
             'akses-cetak-print',
@@ -70,8 +80,13 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
+            'buat-order',
+            'edit-order',
+            'batal-order',
             'akses-pembayaran',
-            'akses-invoice',
+            'buat-pembayaran',
+            'batal-pembayaran',
+            // 'akses-invoice',
             'akses-gudang'
         ]);
 
@@ -79,7 +94,8 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            'edit-order',
+            // 'akses-invoice',
             'akses-desain-data',
             'akses-gudang'
         ]);
@@ -88,7 +104,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-cetak-print',
             'akses-gudang'
         ]);
@@ -97,7 +113,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-press-kain',
             'akses-gudang'
         ]);
@@ -106,7 +122,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-cutting-kain',
             'akses-gudang'
         ]);
@@ -115,7 +131,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-jahit',
             'akses-gudang'
         ]);
@@ -124,7 +140,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-sablon-press-kecil',
             'akses-gudang'
         ]);
@@ -133,7 +149,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-quality-control',
             'akses-gudang'
         ]);
@@ -142,7 +158,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-packaging',
             'akses-gudang'
         ]);
@@ -151,7 +167,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-checking',
             'akses-gudang'
         ]);
@@ -160,7 +176,7 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            'akses-invoice',
+            // 'akses-invoice',
             'akses-gudang'
         ]);
     }

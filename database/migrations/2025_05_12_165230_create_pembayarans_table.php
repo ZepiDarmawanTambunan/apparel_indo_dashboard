@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('pembayaran', function (Blueprint $table) {
             $table->string('id_pembayaran', 8)->primary();
             $table->string('order_id');
-            $table->unsignedBigInteger('sisa_bayar')->default(0);
-            $table->unsignedBigInteger('total')->default(0);
             $table->unsignedBigInteger('bayar')->default(0);
             $table->unsignedBigInteger('kembalian')->default(0);
             $table->unsignedBigInteger('kategori_id');
             $table->unsignedBigInteger('status_id');
-            $table->unsignedBigInteger('user_id');
+            $table->string('user_nama')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('order_id')->references('id_order')->on('order')->onDelete('cascade');
             $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade'); // dp awal, dp produksi, lunas
             $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade'); // batal, terima
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); // kasir, superadmin
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null'); // kasir, superadmin
         });
     }
 

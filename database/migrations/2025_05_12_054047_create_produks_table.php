@@ -12,19 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('produk', function (Blueprint $table) {
-            $table->string('id_produk', 6)->primary();
+            $table->string('id_produk', 8)->primary();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->unsignedInteger('harga')->default(0);
             $table->unsignedInteger('stok')->default(0);
-            $table->unsignedBigInteger('kategori_id');
-            $table->unsignedBigInteger('satuan_id');
-            $table->date('tgl');
-            $table->boolean('status')->default(true);
+            $table->unsignedBigInteger('kategori_id')->nullable();
+            $table->unsignedBigInteger('satuan_id')->nullable();
+            $table->string('parent_id', 8)->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-            $table->foreign('satuan_id')->references('id')->on('satuan')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id_produk')->on('produk')->onDelete('set null');
+            $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('set null');
+            $table->foreign('satuan_id')->references('id')->on('satuan')->onDelete('set null');
         });
     }
 

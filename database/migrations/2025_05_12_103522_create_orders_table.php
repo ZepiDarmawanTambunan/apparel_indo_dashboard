@@ -15,19 +15,24 @@ return new class extends Migration
             $table->string('id_order', 8)->primary();
             $table->string('nama_pelanggan');
             $table->string('nohp_wa');
-            $table->date('tgl');
             $table->date('tgl_deadline')->nullable();
             $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('sub_total')->default(0);
+            $table->unsignedInteger('lainnya')->default(0);
             $table->unsignedInteger('diskon')->default(0);
             $table->unsignedBigInteger('total')->default(0);
+            $table->unsignedBigInteger('total_pembayaran')->default(0);
             $table->unsignedInteger('total_keb_kain')->nullable();
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('status_pembayaran_id');
-            $table->unsignedBigInteger('user_id');
+            $table->string('user_nama')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade'); // batal, proses, selesai
             $table->foreign('status_pembayaran_id')->references('id')->on('kategori')->onDelete('cascade'); // dp awal, dp produksi, lunas
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

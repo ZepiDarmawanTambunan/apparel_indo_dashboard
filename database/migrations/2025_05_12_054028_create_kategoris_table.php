@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('kategori', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->boolean('status')->default(true);
+            $table->text('deskripsi')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+            $table->foreign('parent_id')->references('id')->on('kategori')->onDelete('set null');
         });
     }
 

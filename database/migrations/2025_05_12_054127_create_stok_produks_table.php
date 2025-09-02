@@ -18,14 +18,14 @@ return new class extends Migration
             $table->unsignedInteger('stok_after');
             $table->unsignedBigInteger('kategori_id'); //brg masuk, brg keluar
             $table->text('keterangan')->nullable();
-            $table->boolean('status')->default(true);
-            $table->date('tgl');
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
+            $table->dateTime('tgl_jam');
+            $table->string('user_nama')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->softDeletes();
 
             $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('cascade');
             $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

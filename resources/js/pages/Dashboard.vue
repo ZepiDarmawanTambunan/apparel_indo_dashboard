@@ -2,24 +2,31 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-const menus = [
-  { label: 'Monitoring', icon: '🖥️', route: 'monitoring.index' },
-//   { label: 'Order', icon: '📝', route: 'order.index' },
-//   { label: 'Pembayaran', icon: '💳', route: 'pembayaran.index' },
-//   { label: 'Invoice', icon: '📄', route: 'invoice.index' },
-//   { label: 'Desain & Data', icon: '🎨', route: 'desain.index' },
-//   { label: 'Cetak & Print', icon: '🖨️', route: 'print.index' },
-//   { label: 'Press Kain', icon: '🧵', route: 'press.index' },
-//   { label: 'Cutting Kain', icon: '✂️', route: 'cutting.index' },
-//   { label: 'Jahit', icon: '🧶', route: 'jahit.index' },
-//   { label: 'Sablon & Press Kecil', icon: '🖌️', route: 'sablon.index' },
-//   { label: 'Quality Control', icon: '🔍', route: 'qc.index' },
-//   { label: 'Packaging', icon: '📦', route: 'packaging.index' },
-//   { label: 'Checking', icon: '✅', route: 'checking.index' },
-//   { label: 'Report', icon: '📊', route: 'report.index' },
-//   { label: 'Data', icon: '🗂️', route: 'data.index' },
-//   { label: 'Gudang', icon: '🏬', route: 'gudang.index' },
+const props = defineProps<{
+  permissions: string[];
+}>();
+
+const allMenus = [
+  { label: 'Monitoring', icon: '🖥️', route: 'monitoring.index', permission: 'akses-monitoring' },
+  { label: 'Order', icon: '📝', route: 'order.index', permission: 'akses-order' },
+  { label: 'Pembayaran', icon: '💳', route: 'pembayaran.index', permission: 'akses-pembayaran' },
+  { label: 'Invoice', icon: '📄', route: 'invoice.index', permission: 'akses-invoice' },
+  { label: 'Desain & Data', icon: '🎨', route: 'desain-data.index', permission: 'akses-desain-data' },
+  { label: 'Cetak & Print', icon: '🖨️', route: 'cetak-print.index', permission: 'akses-cetak-print' },
+  { label: 'Press Kain', icon: '🧵', route: 'press-kain.index', permission: 'akses-press-kain' },
+  { label: 'Cutting Kain', icon: '✂️', route: 'cutting-kain.index', permission: 'akses-cutting-kain' },
+  { label: 'Jahit', icon: '🧶', route: 'jahit.index', permission: 'akses-jahit' },
+  { label: 'Sablon & Press Kecil', icon: '🖌️', route: 'sablon-press-kecil.index', permission: 'akses-sablon-press-kecil' },
+  { label: 'Quality Control', icon: '🔍', route: 'qc.index', permission: 'akses-quality-control' },
+  { label: 'Packaging', icon: '📦', route: 'packaging.index', permission: 'akses-packaging' },
+  { label: 'Checking', icon: '✅', route: 'checking.index', permission: 'akses-checking' },
+  { label: 'Report', icon: '📊', route: 'report.index', permission: 'akses-data' },
+  { label: 'Data', icon: '🗂️', route: 'data.index', permission: 'akses-data' },
 ];
+
+const menus = allMenus.filter(menu =>
+  props.permissions.includes(menu.permission)
+);
 </script>
 
 <template>
