@@ -7,18 +7,22 @@ const props = defineProps<{
 }>();
 
 const statusOrder = [
-  'Batal',
-  'Menunggu DP Awal',
-  'Menunggu Invoice DP Awal',
-  'Menunggu Desain',
-  'Menunggu DP Produksi',
-  'Menunggu Invoice DP Produksi',
-  'Proses Produksi',
-  'QC',
-  'Packaging',
-  'Menunggu Tagihan Lunas',
-  'Menunggu Invoice Lunas',
-  'Selesai',
+    'Menunggu DP Awal',
+    'Menunggu ACC DP Awal',
+    'Desain Data',
+    'Menunggu DP Produksi',
+    'Menunggu ACC DP Produksi',
+    'Cetak & Print',
+    'Press Kain',
+    'Cutting Kain',
+    'Jahit',
+    'Sablon & Press Kecil',
+    'QC',
+    'Packaging',
+    'Menunggu Tagihan Lunas',
+    'Menunggu ACC Lunas',
+    'Selesai',
+    'Batal',
 ];
 </script>
 

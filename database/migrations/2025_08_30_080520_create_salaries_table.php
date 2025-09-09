@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
             $table->string('divisi');
-            $table->unsignedInteger('salary');
-            $table->string('produk_id');
-            $table->string('user_nama')->nullable();
+            $table->unsignedInteger('salary')->default(0);
+            $table->string('produk_id')->nullable();
+            $table->string('produk_nama')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('user_nama')->nullable();
 
-            $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('cascade');
+            $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('set null');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();

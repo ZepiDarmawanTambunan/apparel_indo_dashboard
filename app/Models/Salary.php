@@ -11,6 +11,7 @@ class Salary extends Model
 
     protected $fillable = [
         'produk_id',
+        'produk_nama',
         'divisi',
         'salary',
         'user_nama',

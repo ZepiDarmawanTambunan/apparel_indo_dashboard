@@ -19,12 +19,15 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('user_nama')->nullable();
             $table->unsignedBigInteger('jumlah_dikerjakan')->default(0);
+            $table->string('produk_id')->nullable();
+            $table->string('produk_nama')->nullable();
+            $table->unsignedInteger('salary')->default(0);
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('produk_id')->references('id')->on('produk')->onDelete('set null');
             $table->foreign('jahit_id')->references('id')->on('jahit')->onDelete('cascade');
 
             $table->softDeletes();
-
             $table->timestamps();
         });
     }

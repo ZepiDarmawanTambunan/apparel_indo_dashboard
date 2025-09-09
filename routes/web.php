@@ -264,7 +264,7 @@ Route::middleware(['auth', 'permission:akses-data'])
         Route::delete('/kategori/{kategori}', [DataController::class, 'destroyKategori'])->name('kategori.destroy');
 
         Route::get('/salary', [DataController::class, 'salary'])->name('salary');
-        Route::post('/salary/create', [DataController::class, 'createSalary'])->name('salary.create');
+        Route::post('/salary/store', [DataController::class, 'storeSalary'])->name('salary.store');
 
         Route::get('/satuan', [DataController::class, 'satuan'])->name('satuan');
         Route::post('/satuan', [DataController::class, 'storeSatuan'])->name('satuan.store');

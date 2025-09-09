@@ -20,6 +20,9 @@ class RiwayatJahit extends Model implements HasMedia
         'jahit_id',
         'user_id',
         'user_nama',
+        'produk_id',
+        'produk_nama',
+        'salary',
         'jumlah_dikerjakan',
     ];
 

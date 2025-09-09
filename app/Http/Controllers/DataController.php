@@ -10,6 +10,7 @@ use App\Models\Satuan;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
@@ -27,11 +28,10 @@ class DataController extends Controller
         $breadcrumbs = [
             ['title' => 'Data', 'href' => route('data.index')],
         ];
-        $salaries = Salary::with(['produk', 'user'])->get();
-        $produks = Produk::all();
-
+        $produks = Produk::whereNull('deleted_at')
+            ->with('salaries')
+            ->get();
         return Inertia::render('data/salary/Index', [
-            'salaries' => $salaries,
             'produks' => $produks,
             'breadcrumbs' => $breadcrumbs,
         ]);
@@ -42,15 +42,19 @@ class DataController extends Controller
         $validated = $request->validate([
             'produk_id' => 'required|exists:produk,id_produk',
             'divisi'    => 'required|string|max:255',
-            'salary'    => 'required|numeric|min:0',
-            'user_id'   => 'nullable|exists:users,id',
-            'user_nama' => 'nullable|string|max:255',
+            'salary'    => 'required|numeric|min:1000',
         ]);
 
-        Salary::create($validated);
-
-        dd($validated);
-
+        $user = Auth::user();
+        $validated['user_id'] = $user->id;
+        $validated['user_nama'] = $user->nama;
+        Salary::updateOrCreate(
+            [
+                'produk_id' => $request->produk_id,
+                'divisi'    => $request->divisi,
+            ],
+            $validated
+        );
         return redirect()->route('data.salary')->with('success', 'Salary berhasil ditambahkan!');
     }
 

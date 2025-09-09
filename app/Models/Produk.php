@@ -103,7 +103,7 @@ class Produk extends Model implements HasMedia
         return $this->hasMany(OrderTambahan::class, 'order_id', 'id_order');
     }
 
-    public function salary()
+    public function salaries()
     {
         return $this->hasMany(Salary::class, 'produk_id', 'id_produk');
     }

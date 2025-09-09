@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
-import {ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {Select, DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
 import { toast } from 'vue3-toastify';
 
@@ -44,6 +44,9 @@ interface RiwayatCuttingKain {
     cutting_kain_id: number;
     user_id: number;
     user_nama: string;
+    produk_id: number;
+    produk_nama: string;
+    salary: number;
     jumlah_dikerjakan: number;
 }
 
@@ -62,27 +65,51 @@ interface User {
   nama: string;
 }
 
+interface Produk {
+  id_produk: string;
+  nama: string;
+  salaries: Salary[];
+}
+
+interface Salary {
+  id: number;
+  produk_id: string;
+  divisi: string;
+  salary: number;
+  user_id: number;
+  user_nama: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const props = defineProps<{
     cutting_kain: CuttingKain & {
         riwayat_cutting_kain: RiwayatCuttingKain[],
     },
     users: User[],
     laporan_kerusakan: LaporanKerusakan[],
+    produks: Produk[],
 }>();
 
 const filteredUser = ref<User[]>([...props.users]);
+const filteredProduk = ref<Produk[]>([...props.produks]);
 const fotoKerusakan = ref<HTMLInputElement | null>(null);
 const selectRiwayatCuttingKain = ref<RiwayatCuttingKain | null>(null);
+const selectedProduk = ref<Produk | null>(null);
 
 // START HANDLE FORM & SUBMIT
 const formCuttingKain = useForm<{
-  user_id: number | null,
-  riwayat_cutting_kain_id: number | null,
-  jumlah_dikerjakan: number | null,
+    user_id: number | null,
+    produk_id: string | null,
+    riwayat_cutting_kain_id: number | null,
+    jumlah_dikerjakan: number | null,
+    salary: number | null,
 }>({
-  user_id: null,
-  riwayat_cutting_kain_id: null,
-  jumlah_dikerjakan: 1,
+    user_id: null,
+    produk_id: null,
+    riwayat_cutting_kain_id: null,
+    jumlah_dikerjakan: 1,
+    salary: 0,
 });
 
 const submitRiwayatCuttingKain = () => {
@@ -91,6 +118,8 @@ const submitRiwayatCuttingKain = () => {
         preserveState: true,
         onSuccess: () => {
             formCuttingKain.reset();
+            selectedProduk.value = null;
+            selectRiwayatCuttingKain.value = null;
             formCuttingKain.clearErrors();
         },
         onError: (errors) => console.log(errors),
@@ -258,6 +287,50 @@ function getObjectURL(file: File) {
   return URL.createObjectURL(file);
 }
 // END HANDLE FOTO KERUSAKAN
+
+// START HANDLE PRODUK CHANGE
+function onProdukChange() {
+    if (selectedProduk.value) {
+        formCuttingKain.produk_id = selectedProduk.value.id_produk
+    } else {
+        formCuttingKain.produk_id = null
+        formCuttingKain.salary = 0
+    }
+}
+
+const selectSalary = computed(() => {
+    const produk = selectedProduk.value;
+
+    const cuttingKainSalary = produk?.salaries?.find(
+        (sal) => sal.divisi === 'Cutting Kain'
+    );
+
+    console.log(produk);
+    return cuttingKainSalary?.salary ?? 0;
+});
+
+const salary = computed(() => {
+  const salary = selectSalary.value ?? 0
+  const jumlah = formCuttingKain.jumlah_dikerjakan ?? 0
+  const result = salary * jumlah;
+  formCuttingKain.salary = result;
+  return result;
+})
+// END HANDLE PRODUK CHANGE
+
+// START HANDLE CURRENCY
+function formatRupiah(value: number | null) {
+  if (!value) return 'Rp. 0';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  })
+    .format(value)
+    .replace('IDR', 'Rp')
+    .trim();
+}
+// END HANDLE CURRENCY
 </script>
 
 <template>
@@ -302,18 +375,42 @@ function getObjectURL(file: File) {
                 <h2 class="text-2xl font-semibold mb-6">Input Cutting Kain</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                    <label class="block mb-1 font-medium">User</label>
+                        <label class="block mb-1 font-medium">Petugas</label>
                         <Select
                             v-model="formCuttingKain.user_id"
                             :options="filteredUser"
                             filter
                             optionLabel="nama"
                             optionValue="id"
-                            placeholder="Pilih User"
+                            placeholder="Pilih Petugas"
                             :disabled="filteredUser.length === 0"
                             class="w-full"
                         />
                         <span v-if="formCuttingKain.errors.user_id" class="text-red-500 text-sm">{{ formCuttingKain.errors.user_id }}</span>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Produk</label>
+                        <Select
+                            v-model="selectedProduk"
+                            :options="filteredProduk"
+                            filter
+                            optionLabel="nama"
+                            placeholder="Pilih Produk"
+                            class="w-full"
+                            @change="onProdukChange"
+                        />
+                        <span
+                            v-if="formCuttingKain.errors.produk_id"
+                            class="text-red-500 text-sm"
+                        >{{ formCuttingKain.errors.produk_id }}</span>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-medium">Salary</label>
+                        <input
+                            :value="formatRupiah(salary)"
+                            type="text"
+                            class="w-full border rounded px-3 py-2"
+                        />
                     </div>
                     <div>
                         <label class="block mb-1 font-medium">Jumlah Dikerjakan</label>
@@ -371,7 +468,7 @@ function getObjectURL(file: File) {
                         </div>
                     </template>
                     <Column field="created_at" header="Tgl" />
-                    <Column field="user_nama" header="User" />
+                    <Column field="user_nama" header="Petugas" />
                     <Column field="jumlah_dikerjakan" header="Jumlah Dikerjakan" />
                 </DataTable>
             </div>

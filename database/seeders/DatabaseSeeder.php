@@ -65,8 +65,11 @@ class DatabaseSeeder extends Seeder
             // FOR MODEL QC
             StatusQCSeeder::class,
 
-            // FOR MODEL
+            // FOR MODEL PACKAGING
             StatusPackagingSeeder::class,
+
+            // FOR MODEL SALARY
+            SalarySeeder::class,
         ]);
     }
 }

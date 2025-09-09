@@ -20,6 +20,9 @@ class RiwayatCuttingKain extends Model implements HasMedia
         'cutting_kain_id',
         'user_id',
         'user_nama',
+        'produk_id',
+        'produk_nama',
+        'salary',
         'jumlah_dikerjakan',
     ];
 

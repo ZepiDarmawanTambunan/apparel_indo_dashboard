@@ -6,6 +6,7 @@ use App\Models\CuttingKain;
 use App\Models\Jahit;
 use App\Models\Kategori;
 use App\Models\LaporanKerusakan;
+use App\Models\Produk;
 use App\Models\RiwayatCuttingKain;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -39,16 +40,21 @@ class CuttingKainController extends Controller
             'status',
             'riwayatCuttingKain'
         ])->findOrFail($id);
+
         $laporanKerusakan = LaporanKerusakan::with(['status'])
         ->where('order_id', $cuttingKain->order_id)
         // ->where('divisi_pelapor', 'Cutting Kain')
         ->whereNull('deleted_at')
         ->orderBy('updated_at', 'DESC')
         ->get();
+        $produks = Produk::whereNull('deleted_at')
+            ->with('salaries')
+            ->get();
         $users = User::select('id', 'nama')->get();
         return Inertia::render('cutting-kain/Show', [
             'cutting_kain' => $cuttingKain,
             'users' => $users,
+            'produks' => $produks,
             'laporan_kerusakan' => $laporanKerusakan,
         ]);
     }

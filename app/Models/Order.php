@@ -229,7 +229,6 @@ class Order extends Model
         $statusQcBatalId = Kategori::getKategoriId('Status QC', 'Batal');
         $statusPackagingBatalId = Kategori::getKategoriId('Status Packaging', 'Batal');
 
-
         // GET DATA SIKLUS
         $dataDesain = $this->dataDesain()
             ->where('status_id', '!=', $statusDataDesainBatalId)
