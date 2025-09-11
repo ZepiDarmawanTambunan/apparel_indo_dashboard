@@ -168,7 +168,7 @@ const formatCurrency = (value: number) : string => {
 
                 <!-- Main Table Columns -->
                 <Column expander style="width: 5rem" />
-                <Column field="nama" header="Nama" />
+                <Column field="nama" header="Nama" sortable />
 
                 <!-- Expansion Template -->
                 <template #expansion="slotProps">

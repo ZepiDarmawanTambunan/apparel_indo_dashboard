@@ -125,6 +125,8 @@ class CuttingKainController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'jumlah_dikerjakan' => 'nullable|integer|min:0',
+            'produk_id' => 'nullable|exists:produks,id_produk',
+            'salary' => 'nullable|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -133,26 +135,31 @@ class CuttingKainController extends Controller
 
             $cuttingKain = CuttingKain::findOrFail($id);
             $user = User::findOrFail($request->user_id);
+            // Ambil nama produk (jika ada)
+            $produkNama = null;
+            if ($request->filled('produk_id')) {
+                $produk = Produk::where('id_produk', $request->produk_id)->first();
+                $produkNama = $produk?->nama;
+            }
+
+            $dataRiwayat = [
+                'cutting_kain_id'   => $cuttingKain->id,
+                'user_id'           => $request->user_id,
+                'user_nama'         => $user->nama,
+                'produk_id'         => $request->produk_id,
+                'produk_nama'       => $produkNama,
+                'salary'            => $request->salary ?? 0,
+                'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
+            ];
+
 
             if ($request->filled('riwayat_cutting_kain_id')) {
-                // ✅ 1. Update riwayat
+                // ✅ Update riwayat yang ada
                 $riwayat = RiwayatCuttingKain::findOrFail($request->riwayat_cutting_kain_id);
-
-                $riwayat->update([
-                    'cutting_kain_id' => $cuttingKain->id,
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
-                    'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
-                ]);
-
+                $riwayat->update($dataRiwayat);
             } else {
-                // ✅ 2. Buat riwayat baru
-                $riwayat = RiwayatCuttingKain::create([
-                    'cutting_kain_id' => $cuttingKain->id,
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
-                    'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
-                ]);
+                // ✅ Buat riwayat baru
+                $riwayat = RiwayatCuttingKain::create($dataRiwayat);
             }
 
             DB::commit();

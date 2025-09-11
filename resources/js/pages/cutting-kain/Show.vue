@@ -103,7 +103,7 @@ const formCuttingKain = useForm<{
     produk_id: string | null,
     riwayat_cutting_kain_id: number | null,
     jumlah_dikerjakan: number | null,
-    salary: number | null,
+    salary: number,
 }>({
     user_id: null,
     produk_id: null,
@@ -176,19 +176,22 @@ watch(selectRiwayatCuttingKain, (newVal) => {
 });
 
 watch(() => formCuttingKain.jumlah_dikerjakan, (val) => {
-  const totalQty = props.cutting_kain.order?.total_qty ?? 0;
-  const totalRiwayat = props.cutting_kain.riwayat_cutting_kain.reduce((acc, r) => acc + r.jumlah_dikerjakan, 0);
-  const isEditing = !!formCuttingKain.riwayat_cutting_kain_id;
-  const prevJumlah = isEditing
-    ? props.cutting_kain.riwayat_cutting_kain.find(r => r.id === formCuttingKain.riwayat_cutting_kain_id)?.jumlah_dikerjakan ?? 0
-    : 0;
+    const totalQty = props.cutting_kain.order?.total_qty ?? 0;
+    const totalRiwayat = props.cutting_kain.riwayat_cutting_kain.reduce((acc, r) => acc + r.jumlah_dikerjakan, 0);
+    const isEditing = !!formCuttingKain.riwayat_cutting_kain_id;
+    const prevJumlah = isEditing
+        ? props.cutting_kain.riwayat_cutting_kain.find(r => r.id === formCuttingKain.riwayat_cutting_kain_id)?.jumlah_dikerjakan ?? 0
+        : 0;
 
-  const sisa = totalQty - totalRiwayat + prevJumlah;
+    const sisa = totalQty - totalRiwayat + prevJumlah;
 
-  if (val && val > sisa) {
-    toast.error(`Jumlah dikerjakan tidak boleh melebihi sisa maksimal: ${sisa}`);
-    formCuttingKain.jumlah_dikerjakan = sisa;
-  }
+    if (val && val > sisa) {
+        toast.error(`Jumlah dikerjakan tidak boleh melebihi sisa maksimal: ${sisa}`);
+        formCuttingKain.jumlah_dikerjakan = sisa;
+    }
+
+    const jumlah = formCuttingKain.jumlah_dikerjakan ?? 0;
+    formCuttingKain.salary = selectSalary.value * jumlah;
 });
 // END EDIT DATA DESAIN
 
@@ -292,6 +295,7 @@ function getObjectURL(file: File) {
 function onProdukChange() {
     if (selectedProduk.value) {
         formCuttingKain.produk_id = selectedProduk.value.id_produk
+        formCuttingKain.salary = selectSalary.value
     } else {
         formCuttingKain.produk_id = null
         formCuttingKain.salary = 0
@@ -300,36 +304,25 @@ function onProdukChange() {
 
 const selectSalary = computed(() => {
     const produk = selectedProduk.value;
-
     const cuttingKainSalary = produk?.salaries?.find(
         (sal) => sal.divisi === 'Cutting Kain'
     );
-
-    console.log(produk);
     return cuttingKainSalary?.salary ?? 0;
 });
-
-const salary = computed(() => {
-  const salary = selectSalary.value ?? 0
-  const jumlah = formCuttingKain.jumlah_dikerjakan ?? 0
-  const result = salary * jumlah;
-  formCuttingKain.salary = result;
-  return result;
-})
 // END HANDLE PRODUK CHANGE
 
 // START HANDLE CURRENCY
-function formatRupiah(value: number | null) {
-  if (!value) return 'Rp. 0';
+const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
     minimumFractionDigits: 0,
-  })
-    .format(value)
-    .replace('IDR', 'Rp')
-    .trim();
+    maximumFractionDigits: 0,
+  }).format(value)
 }
+const parseCurrency = (value: string): number => {
+    return parseInt(value.replace(/[^\d]/g, '') || '0', 10);
+};
 // END HANDLE CURRENCY
 </script>
 
@@ -407,7 +400,10 @@ function formatRupiah(value: number | null) {
                     <div>
                         <label class="block mb-1 font-medium">Salary</label>
                         <input
-                            :value="formatRupiah(salary)"
+                            :value="formatCurrency(formCuttingKain.salary)"
+                            @input="(e: any) => formCuttingKain.salary = parseCurrency(e.target.value)"
+                            @blur="(e: any) => e.target.value = formatCurrency(formCuttingKain.salary)"
+                            inputmode="numeric"
                             type="text"
                             class="w-full border rounded px-3 py-2"
                         />
