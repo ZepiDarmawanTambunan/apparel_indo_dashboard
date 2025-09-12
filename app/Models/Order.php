@@ -313,21 +313,24 @@ class Order extends Model
         if ($pembayaranDPProduksi && $pembayaranDPProduksi->status?->nama === 'Menunggu ACC') {
             $statusOrder = 'Menunggu ACC DP Produksi';
         }
-
-        if ($pembayaranDPProduksi && $pembayaranDPProduksi->status?->nama === 'Selesai') {
-            $statusOrder = 'Cetak & Print';
-        }
         // END MENUNGGU ACC DP PRODUKSI
 
         // START MENUNGGU ACC LUNAS
         if ($dataDesain && $dataDesain->status?->nama === 'Selesai' && $pembayaranLunas && $pembayaranLunas->status?->nama === 'Menunggu ACC') {
             $statusOrder = 'Menunggu ACC Lunas';
         }
+        // END MENUNGGU ACC LUNAS
 
-        if ($dataDesain && $dataDesain->status?->nama === 'Selesai' && $pembayaranLunas && $pembayaranLunas->status?->nama === 'Selesai') {
+        // START CETAK & PRINT
+        if ($dataDesain && $dataDesain->status?->nama === 'Selesai' &&
+            (
+                ($pembayaranDPProduksi && $pembayaranDPProduksi->status?->nama === 'Selesai') ||
+                ($pembayaranLunas && $pembayaranLunas->status?->nama === 'Selesai')
+            )
+        ) {
             $statusOrder = 'Cetak & Print';
         }
-        // END MENUNGGU ACC LUNAS
+        // END CETAK & PRINT
 
         // START PROSES PRODUKSI
         if ($cetakPrint && $cetakPrint->status?->nama === 'Selesai') {
