@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Jahit;
 use App\Models\Kategori;
 use App\Models\LaporanKerusakan;
+use App\Models\Produk;
 use App\Models\RiwayatJahit;
 use App\Models\SablonPress;
 use App\Models\User;
@@ -34,21 +35,57 @@ class JahitController extends Controller
     public function show($id)
     {
         $jahit = Jahit::with([
+            'order.orderDetail.produk.salaries',
+            'order.orderDetail.orderTambahan.produk.salaries',
             'order.status',
             'order.statusPembayaran',
             'status',
             'riwayatJahit'
         ])->findOrFail($id);
+
         $laporanKerusakan = LaporanKerusakan::with(['status'])
         ->where('order_id', $jahit->order_id)
         // ->where('divisi_pelapor', 'Jahit')
         ->whereNull('deleted_at')
         ->orderBy('updated_at', 'DESC')
         ->get();
+
+        $order = $jahit->order;
+        if (!$order) {
+            $produks = collect();
+        } else {
+            $produkFromOrderDetail = $order->orderDetail->map(fn ($detail) => [
+                'id_produk' => $detail->produk->id_produk,
+                'nama'      => $detail->produk->nama,
+                'qty'       => $detail->qty,
+                'salaries'  => $detail->produk->salaries,
+            ]);
+
+            $produkFromOrderTambahan = $order->orderDetail
+                ->flatMap->orderTambahan
+                ->map(fn ($tambahan) => [
+                    'id_produk' => $tambahan->produk_id,
+                    'nama'      => $tambahan->nama,
+                    'qty'       => $tambahan->qty,
+                    'salaries'  => $tambahan->produk->salaries,
+                ]);
+
+            $allProduk = $produkFromOrderDetail->merge($produkFromOrderTambahan);
+            $produks = $allProduk->groupBy(fn ($item) => $item['id_produk'].'|'.$item['nama'])
+                ->map(fn ($items) => [
+                    'id_produk' => $items->first()['id_produk'],
+                    'nama'      => $items->first()['nama'],
+                    'qty'       => $items->sum('qty'),
+                    'salaries'  => $items->first()['salaries'],
+                ])
+                ->values();
+        }
+
         $users = User::select('id', 'nama')->get();
         return Inertia::render('jahit/Show', [
             'jahit' => $jahit,
             'users' => $users,
+            'produks' => $produks,
             'laporan_kerusakan' => $laporanKerusakan,
         ]);
     }
@@ -118,7 +155,9 @@ class JahitController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'jumlah_dikerjakan' => 'nullable|integer|min:0',
+            'jumlah_dikerjakan' => 'required|integer|min:1',
+            'produk_id' => 'required|exists:produk,id_produk',
+            'salary' => 'required|numeric|min:1000',
         ]);
 
         DB::beginTransaction();
@@ -127,26 +166,28 @@ class JahitController extends Controller
 
             $jahit = Jahit::findOrFail($id);
             $user = User::findOrFail($request->user_id);
+            // Ambil nama produk (jika ada)
+            $produkNama = null;
+            if ($request->filled('produk_id')) {
+                $produk = Produk::where('id_produk', $request->produk_id)->first();
+                $produkNama = $produk?->nama;
+            }
+
+            $dataRiwayat = [
+                'jahit_id'          => $jahit->id,
+                'user_id'           => $request->user_id,
+                'user_nama'         => $user->nama,
+                'produk_id'         => $request->produk_id,
+                'produk_nama'       => $produkNama,
+                'salary'            => $request->salary ?? 0,
+                'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
+            ];
 
             if ($request->filled('riwayat_jahit_id')) {
-                // ✅ 1. Update riwayat
                 $riwayat = RiwayatJahit::findOrFail($request->riwayat_jahit_id);
-
-                $riwayat->update([
-                    'jahit_id' => $jahit->id,
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
-                    'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
-                ]);
-
+                $riwayat->update($dataRiwayat);
             } else {
-                // ✅ 2. Buat riwayat baru
-                $riwayat = RiwayatJahit::create([
-                    'jahit_id' => $jahit->id,
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
-                    'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
-                ]);
+                $riwayat = RiwayatJahit::create($dataRiwayat);
             }
 
             DB::commit();

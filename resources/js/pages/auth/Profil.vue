@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, useForm, router, Link } from '@inertiajs/vue3';
-import {ref, watch} from 'vue';
-import {Select, DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
-import { toast } from 'vue3-toastify';
+import { Head, useForm } from '@inertiajs/vue3';
+import {ref} from 'vue';
+import {ConfirmDialog } from 'primevue';
 
 interface Pegawai {
   id: number;

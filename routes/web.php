@@ -140,6 +140,7 @@ Route::middleware(['auth', 'permission:akses-order'])
         Route::get('/{id}', [CuttingKainController::class, 'show'])->name('show');
         Route::put('/{id}/terima', [CuttingKainController::class, 'terima'])->name('terima');
         Route::put('/{id}/batal', [CuttingKainController::class, 'batal'])->name('batal');
+        Route::put('/{id}/batal-riwayat', [CuttingKainController::class, 'batalRiwayat'])->name('batal-riwayat');
         Route::put('/{id}/selesai', [CuttingKainController::class, 'selesai'])->name('selesai');
         Route::put('/{id}', [CuttingKainController::class, 'update'])->name('update');
 });

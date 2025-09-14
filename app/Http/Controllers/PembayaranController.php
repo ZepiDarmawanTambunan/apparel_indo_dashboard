@@ -42,12 +42,16 @@ class PembayaranController extends Controller
     public function create()
     {
         $kategoriPembayaranParent = Kategori::where('nama', 'Kategori Pembayaran')->first();
-        $statusBatalId = Kategori::getKategoriId('Status Order', 'Batal');
+
+        // Status Order
         $statusSelesaiId = Kategori::getKategoriId('Status Order', 'Selesai');
+        $statusBatalId = Kategori::getKategoriId('Status Order', 'Batal');
+        $statusPembayaranId = Kategori::getKategoriId('Status Pembayaran Order', 'Lunas');
 
         return Inertia::render('pembayaran/Create', [
             'orders' => Order::with(['statusPembayaran', 'status'])
                             ->whereNotIn('status_id', [$statusBatalId, $statusSelesaiId])
+                            ->whereNotIn('status_pembayaran_id', [$statusPembayaranId])
                             ->get(),
             'kategori' => Kategori::select('id', 'nama')
                             ->where('parent_id', $kategoriPembayaranParent->id)
@@ -62,7 +66,7 @@ class PembayaranController extends Controller
             'kategori_id' => 'required|exists:kategori,id',
             'bayar' => 'required|numeric|min:1',
             'kembalian' => 'required|numeric|min:0',
-            'bukti_pembayaran' => 'required|image|max:2048',
+            'bukti_pembayaran' => 'nullable|image|max:2048',
         ]);
 
         DB::beginTransaction();

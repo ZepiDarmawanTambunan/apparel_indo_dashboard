@@ -294,7 +294,6 @@ watch(() => form.bayar, () => {
                                 type="file"
                                 accept="image/*"
                                 @change="onFileChange"
-                                required
                                 class="w-full border rounded px-3 py-2 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700"
                             />
                             <span v-if="form.errors.bukti_pembayaran" class="text-red-500 text-sm">{{ form.errors.bukti_pembayaran }}</span>

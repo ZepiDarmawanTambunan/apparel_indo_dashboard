@@ -23,6 +23,32 @@ interface Order {
     sisa_bayar: number;
     status: Kategori;
     status_pembayaran: Kategori;
+    order_detail?: OrderDetail[];
+    order_tambahan?: OrderTambahan[];
+}
+
+interface OrderTambahan {
+    id: string;
+    order_detail_id: string;
+    produk_id: string;
+    nama: string;
+    kategori?: string | null;
+    satuan?: string | null;
+    qty: number;
+    harga: number;
+    total: number;
+}
+
+interface OrderDetail {
+    id: string;
+    order_id: string;
+    produk_id: string;
+    nama: string;
+    kategori?: string | null;
+    satuan?: string | null;
+    qty: number;
+    harga: number;
+    total: number;
 }
 
 interface CuttingKain {
@@ -44,7 +70,7 @@ interface RiwayatCuttingKain {
     cutting_kain_id: number;
     user_id: number;
     user_nama: string;
-    produk_id: number;
+    produk_id: string;
     produk_nama: string;
     salary: number;
     jumlah_dikerjakan: number;
@@ -61,25 +87,26 @@ interface LaporanKerusakan {
 }
 
 interface User {
-  id: number;
-  nama: string;
+    id: number;
+    nama: string;
 }
 
 interface Produk {
-  id_produk: string;
-  nama: string;
-  salaries: Salary[];
+    id_produk: string;
+    nama: string;
+    qty: number;
+    salaries: Salary[];
 }
 
 interface Salary {
-  id: number;
-  produk_id: string;
-  divisi: string;
-  salary: number;
-  user_id: number;
-  user_nama: string;
-  created_at: string;
-  updated_at: string;
+    id: number;
+    produk_id: string;
+    divisi: string;
+    salary: number;
+    user_id: number;
+    user_nama: string;
+    created_at: string;
+    updated_at: string;
 }
 
 const props = defineProps<{
@@ -87,8 +114,8 @@ const props = defineProps<{
         riwayat_cutting_kain: RiwayatCuttingKain[],
     },
     users: User[],
-    laporan_kerusakan: LaporanKerusakan[],
     produks: Produk[],
+    laporan_kerusakan: LaporanKerusakan[],
 }>();
 
 const filteredUser = ref<User[]>([...props.users]);
@@ -108,7 +135,7 @@ const formCuttingKain = useForm<{
     user_id: null,
     produk_id: null,
     riwayat_cutting_kain_id: null,
-    jumlah_dikerjakan: 1,
+    jumlah_dikerjakan: 0,
     salary: 0,
 });
 
@@ -172,24 +199,32 @@ watch(selectRiwayatCuttingKain, (newVal) => {
         formCuttingKain.riwayat_cutting_kain_id = newVal.id;
         formCuttingKain.user_id = newVal.user_id;
         formCuttingKain.jumlah_dikerjakan = newVal.jumlah_dikerjakan;
+
+        // Cari produk berdasarkan id_produk dari riwayat
+        const produk = filteredProduk.value.find(
+            (p) => p.id_produk === newVal.produk_id
+        ) ?? null;
+
+        selectedProduk.value = produk;
+        formCuttingKain.produk_id = produk?.id_produk ?? null;
     }
 });
-
 watch(() => formCuttingKain.jumlah_dikerjakan, (val) => {
-    const totalQty = props.cutting_kain.order?.total_qty ?? 0;
-    const totalRiwayat = props.cutting_kain.riwayat_cutting_kain.reduce((acc, r) => acc + r.jumlah_dikerjakan, 0);
-    const isEditing = !!formCuttingKain.riwayat_cutting_kain_id;
-    const prevJumlah = isEditing
-        ? props.cutting_kain.riwayat_cutting_kain.find(r => r.id === formCuttingKain.riwayat_cutting_kain_id)?.jumlah_dikerjakan ?? 0
-        : 0;
-
-    const sisa = totalQty - totalRiwayat + prevJumlah;
-
-    if (val && val > sisa) {
-        toast.error(`Jumlah dikerjakan tidak boleh melebihi sisa maksimal: ${sisa}`);
-        formCuttingKain.jumlah_dikerjakan = sisa;
+    const produkQty = selectedProduk.value?.qty ?? 0;
+    // Kalau kosong/null, reset ke 0
+    if (!val && val !== 0) {
+        formCuttingKain.jumlah_dikerjakan = 0;
+        return;
     }
-
+    // Skip validasi kalau produkQty 0 (belum pilih produk)
+    if (!produkQty) {
+        return;
+    }
+    // Validasi jumlah
+    if (val > produkQty) {
+        toast.error(`Jumlah dikerjakan tidak boleh melebihi maksimal: ${produkQty}`);
+        formCuttingKain.jumlah_dikerjakan = produkQty;
+    }
     const jumlah = formCuttingKain.jumlah_dikerjakan ?? 0;
     formCuttingKain.salary = selectSalary.value * jumlah;
 });
@@ -197,11 +232,11 @@ watch(() => formCuttingKain.jumlah_dikerjakan, (val) => {
 
 // START HANDLE FORM LAPORAN KERUSAKAN
 const formKerusakan = useForm({
-  order_id: props.cutting_kain.order_id,
-  keterangan: '',
-  divisi_pelapor: 'Cutting Kain',
-  jumlah_rusak: 1,
-  foto_kerusakan: null as File | null,
+    order_id: props.cutting_kain.order_id,
+    keterangan: '',
+    divisi_pelapor: 'Cutting Kain',
+    jumlah_rusak: 1,
+    foto_kerusakan: null as File | null,
 });
 
 function submitKerusakan() {
@@ -213,19 +248,18 @@ function submitKerusakan() {
     if (formKerusakan.foto_kerusakan) {
         data.append('foto_kerusakan', formKerusakan.foto_kerusakan);
     }
-
-  formKerusakan.post(route('laporan-kerusakan.store'), {
-    forceFormData: true,
-    preserveScroll: true,
-    preserveState: true,
-    onSuccess: () => {
-      formKerusakan.reset();
-      formKerusakan.foto_kerusakan = null;
-      if (fotoKerusakan.value) fotoKerusakan.value.value = '';
-      formKerusakan.clearErrors();
-    },
-    onError: (errors) => console.log(errors),
-  });
+    formKerusakan.post(route('laporan-kerusakan.store'), {
+        forceFormData: true,
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            formKerusakan.reset();
+            formKerusakan.foto_kerusakan = null;
+            if (fotoKerusakan.value) fotoKerusakan.value.value = '';
+            formKerusakan.clearErrors();
+        },
+        onError: (errors) => console.log(errors),
+    });
 }
 // END HANDLE FORM LAPORAN KERUSAKAN
 
@@ -247,7 +281,6 @@ function selesaiLaporan(id: number) {
         },
     });
 }
-
 function batalLaporan(id: number) {
     confirm.require({
         message: 'Yakin ingin membatalkan laporan ini?',
@@ -285,11 +318,29 @@ function onFotoChangeKerusakan(event: Event) {
     formKerusakan.foto_kerusakan = file;
   }
 }
-
 function getObjectURL(file: File) {
   return URL.createObjectURL(file);
 }
 // END HANDLE FOTO KERUSAKAN
+
+// HANDLE BATAL RIWAYAT CUTTING KAIN
+function batalRiwayat(id: number) {
+    confirm.require({
+        message: 'Yakin ingin membatalkan riwayat ini?',
+        header: 'Konfirmasi',
+        acceptLabel: 'Ya',
+        rejectLabel: 'Batal',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+            router.put(route('cutting-kain.batal-riwayat', id), {}, {
+                preserveScroll: true,
+                onError: () => {
+                    toast.error('Gagal membatalkan riwayat.')
+                }
+            })
+        },
+    });
+}
 
 // START HANDLE PRODUK CHANGE
 function onProdukChange() {
@@ -301,7 +352,6 @@ function onProdukChange() {
         formCuttingKain.salary = 0
     }
 }
-
 const selectSalary = computed(() => {
     const produk = selectedProduk.value;
     const cuttingKainSalary = produk?.salaries?.find(
@@ -407,13 +457,14 @@ const parseCurrency = (value: string): number => {
                             type="text"
                             class="w-full border rounded px-3 py-2"
                         />
+                        <span v-if="formCuttingKain.errors.salary" class="text-red-500 text-sm">{{ formCuttingKain.errors.salary }}</span>
                     </div>
                     <div>
                         <label class="block mb-1 font-medium">Jumlah Dikerjakan</label>
                         <input
                             v-model.number="formCuttingKain.jumlah_dikerjakan"
                             type="number"
-                            min="1"
+                            min="0"
                             class="w-full border rounded px-3 py-2"
                         />
                         <span v-if="formCuttingKain.errors.jumlah_dikerjakan" class="text-red-500 text-sm">{{ formCuttingKain.errors.jumlah_dikerjakan }}</span>
@@ -465,7 +516,24 @@ const parseCurrency = (value: string): number => {
                     </template>
                     <Column field="created_at" header="Tgl" />
                     <Column field="user_nama" header="Petugas" />
+                    <Column field="produk_nama" header="Produk" />
+                    <Column field="salary" header="Upah">
+                        <template #body="{ data }">
+                            {{ formatCurrency(data.salary) }}
+                        </template>
+                    </Column>
                     <Column field="jumlah_dikerjakan" header="Jumlah Dikerjakan" />
+                    <Column header="Aksi">
+                        <template #body="slotProps">
+                                <button
+                                    v-if="cutting_kain.status?.nama == 'Proses'"
+                                    @click="batalRiwayat(slotProps.data.id)"
+                                    class="px-3 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700 cursor-pointer"
+                                >
+                                    Batal
+                                </button>
+                        </template>
+                    </Column>
                 </DataTable>
             </div>
 

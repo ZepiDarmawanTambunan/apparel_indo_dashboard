@@ -133,9 +133,7 @@ class ReportController extends Controller
             ->whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->when($statusOrder, fn ($q) => $q->where('status_id', $statusOrder))
-            ->when($statusPembayaran, fn ($q) => $q->whereHas('pembayaran', function ($q) use ($statusPembayaran) {
-                $q->where('status_id', $statusPembayaran);
-            }))
+            ->when($statusPembayaran, fn ($q) => $q->where('status_pembayaran_id', $statusPembayaran))
         ->latest()
         ->get();
 
@@ -212,27 +210,27 @@ class ReportController extends Controller
         // Ambil jumlah qty dari order_detail
         $orderDetailQty = DB::table('order_detail')
             ->join('order', 'order_detail.order_id', '=', 'order.id_order')
-            ->select('order_detail.produk_id', DB::raw('SUM(order_detail.qty) as total_qty'))
+            ->select('order_detail.produk_id', DB::raw('SUM(order_detail.qty) as total_terjual'))
             ->whereMonth('order.created_at', $month)
             ->whereYear('order.created_at', $year)
             ->groupBy('order_detail.produk_id')
-            ->pluck('total_qty', 'order_detail.produk_id');
+            ->pluck('total_terjual', 'order_detail.produk_id');
 
         // Ambil jumlah qty dari order_tambahan
         $orderTambahanQty = DB::table('order_tambahan')
             ->join('order_detail', 'order_tambahan.order_detail_id', '=', 'order_detail.id')
             ->join('order', 'order_detail.order_id', '=', 'order.id_order')
-            ->select('order_tambahan.produk_id', DB::raw('SUM(order_tambahan.qty) as total_qty'))
+            ->select('order_tambahan.produk_id', DB::raw('SUM(order_tambahan.qty) as total_terjual'))
             ->whereMonth('order.created_at', $month)
             ->whereYear('order.created_at', $year)
             ->groupBy('order_tambahan.produk_id')
-            ->pluck('total_qty', 'order_tambahan.produk_id');
+            ->pluck('total_terjual', 'order_tambahan.produk_id');
 
         // Gabungkan qty ke produk
         foreach ($produks as $produk) {
             $qty1 = $orderDetailQty[$produk->id_produk] ?? 0;
             $qty2 = $orderTambahanQty[$produk->id_produk] ?? 0;
-            $produk->total_qty = $qty1 + $qty2;
+            $produk->total_terjual = $qty1 + $qty2;
         }
 
         $pdf = Pdf::loadView('exports.produk-pdf', [
@@ -268,9 +266,7 @@ class ReportController extends Controller
             ])
             ->whereMonth('riwayat_jahit.created_at', $month)
             ->whereYear('riwayat_jahit.created_at', $year)
-            ->when($kategori, function ($query) use ($kategori) {
-                $query->where('jahit.status_id', $kategori);
-            })
+            ->when($kategori, fn ($q) => $q->where('jahit.status_id', $kategori))
             ->orderBy('jahit.order_id')
             ->get();
 
@@ -307,9 +303,7 @@ class ReportController extends Controller
             ])
             ->whereMonth('riwayat_cutting_kain.created_at', $month)
             ->whereYear('riwayat_cutting_kain.created_at', $year)
-            ->when($kategori, function ($query) use ($kategori) {
-                $query->where('cutting_kain.status_id', $kategori);
-            })
+            ->when($kategori, fn ($q) => $q->where('cutting_kain.status_id', $kategori))
             ->orderBy('cutting_kain.order_id')
             ->get();
 

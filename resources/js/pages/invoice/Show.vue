@@ -179,6 +179,7 @@ function submit(status: 'batal' | 'selesai') {
         </a>
         <div v-if="invoice.status.nama === 'Proses'" class="flex flex-wrap justify-end gap-2 pt-6">
           <a
+            v-if="invoice.pembayaran.bukti_pembayaran"
             :href="invoice.pembayaran.bukti_pembayaran"
             target="_blank"
             rel="noopener noreferrer"

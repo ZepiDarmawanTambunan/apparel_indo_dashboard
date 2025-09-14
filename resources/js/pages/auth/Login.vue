@@ -32,7 +32,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Apparel Indo" description="Masukkan ID Pegawai dan password">
+    <AuthLayout title="Apparel Indo" description="Masukkan ID Pegawai dan Kata Sandi">
         <Head title="Log in" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
@@ -57,9 +57,9 @@ const submit = () => {
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
+                        <Label for="password">Kata Sandi</Label>
                         <TextLink v-if="canResetPassword" :href="route('password.request')" class="text-sm" :tabindex="5">
-                            Forgot password?
+                            Lupa kata sandi?
                         </TextLink>
                     </div>
                     <div class="relative">
@@ -88,13 +88,13 @@ const submit = () => {
                 <div class="flex items-center justify-between">
                     <Label for="remember" class="flex items-center space-x-3">
                         <Checkbox id="remember" v-model="form.remember" :tabindex="3" />
-                        <span>Remember me</span>
+                        <span>Ingat saya</span>
                     </Label>
                 </div>
 
                 <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="form.processing">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                    Log in
+                    Masuk
                 </Button>
             </div>
         </form>

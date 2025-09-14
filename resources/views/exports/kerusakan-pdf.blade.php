@@ -12,6 +12,11 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .timestamp {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 15px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -30,6 +35,9 @@
 <body>
 
     <h2>Laporan Kerusakan <br>Bulan {{ str_pad($month, 2, '0', STR_PAD_LEFT) }} Tahun {{ $year }}</h2>
+    <div class="timestamp">
+        Dicetak pada: {{ \Carbon\Carbon::now()->format('d-m-Y H:i:s') }}
+    </div>
 
     <table>
         <thead>
@@ -39,10 +47,10 @@
                 <th>Nama Pelanggan</th>
                 <th>Tanggal Laporan</th>
                 <th>Divisi Pelapor</th>
-                <th>Jumlah Rusak</th>
                 <th>Status Kerusakan</th>
                 <th>Status Checking</th>
                 <th>Keterangan</th>
+                <th>Jumlah Rusak</th>
             </tr>
         </thead>
         <tbody>
@@ -53,14 +61,14 @@
                     <td>{{ $laporan->order->nama_pelanggan ?? '-' }}</td>
                     <td>{{ $laporan->created_at }}</td>
                     <td>{{ $laporan->divisi_pelapor ?? '-' }}</td>
-                    <td>{{ $laporan->jumlah_rusak }}</td>
                     <td>{{ $laporan->status->nama ?? '-' }}</td>
                     <td>{{ $laporan->statusChecking->nama ?? '-' }}</td>
                     <td>{{ $laporan->keterangan ?? '-' }}</td>
+                    <td>{{ $laporan->jumlah_rusak }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center;">Tidak ada data kerusakan selesai pada bulan ini.</td>
+                    <td colspan="9" style="text-align: center;">Tidak ada data kerusakan pada bulan ini.</td>
                 </tr>
             @endforelse
         </tbody>

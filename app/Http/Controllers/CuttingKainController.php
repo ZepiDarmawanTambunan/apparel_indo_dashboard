@@ -35,6 +35,8 @@ class CuttingKainController extends Controller
     public function show($id)
     {
         $cuttingKain = CuttingKain::with([
+            'order.orderDetail.produk.salaries',
+            'order.orderDetail.orderTambahan.produk.salaries',
             'order.status',
             'order.statusPembayaran',
             'status',
@@ -42,14 +44,43 @@ class CuttingKainController extends Controller
         ])->findOrFail($id);
 
         $laporanKerusakan = LaporanKerusakan::with(['status'])
-        ->where('order_id', $cuttingKain->order_id)
-        // ->where('divisi_pelapor', 'Cutting Kain')
-        ->whereNull('deleted_at')
-        ->orderBy('updated_at', 'DESC')
-        ->get();
-        $produks = Produk::whereNull('deleted_at')
-            ->with('salaries')
+            ->where('order_id', $cuttingKain->order_id)
+            // ->where('divisi_pelapor', 'Cutting Kain')
+            ->whereNull('deleted_at')
+            ->orderBy('updated_at', 'DESC')
             ->get();
+
+        $order = $cuttingKain->order;
+        if (!$order) {
+            $produks = collect();
+        } else {
+            $produkFromOrderDetail = $order->orderDetail->map(fn ($detail) => [
+                'id_produk' => $detail->produk->id_produk,
+                'nama'      => $detail->produk->nama,
+                'qty'       => $detail->qty,
+                'salaries'  => $detail->produk->salaries,
+            ]);
+
+            $produkFromOrderTambahan = $order->orderDetail
+                ->flatMap->orderTambahan
+                ->map(fn ($tambahan) => [
+                    'id_produk' => $tambahan->produk_id,
+                    'nama'      => $tambahan->nama,
+                    'qty'       => $tambahan->qty,
+                    'salaries'  => $tambahan->produk->salaries,
+                ]);
+
+            $allProduk = $produkFromOrderDetail->merge($produkFromOrderTambahan);
+            $produks = $allProduk->groupBy(fn ($item) => $item['id_produk'].'|'.$item['nama'])
+                ->map(fn ($items) => [
+                    'id_produk' => $items->first()['id_produk'],
+                    'nama'      => $items->first()['nama'],
+                    'qty'       => $items->sum('qty'),
+                    'salaries'  => $items->first()['salaries'],
+                ])
+                ->values();
+        }
+
         $users = User::select('id', 'nama')->get();
         return Inertia::render('cutting-kain/Show', [
             'cutting_kain' => $cuttingKain,
@@ -120,13 +151,33 @@ class CuttingKainController extends Controller
         }
     }
 
+    public function batalRiwayat($id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $riwayatCuttingKain = RiwayatCuttingKain::findOrFail($id);
+
+            $riwayatCuttingKain->delete();
+            DB::commit();
+
+            return redirect()->route('cutting-kain.show')->with('toast', [
+                'type' => 'success',
+                'message' => 'Riwayat berhasil dibatalkan dan status diupdate.',
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal membatalkan riwayat: ' . $e->getMessage()]);
+        }
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'jumlah_dikerjakan' => 'nullable|integer|min:0',
-            'produk_id' => 'nullable|exists:produks,id_produk',
-            'salary' => 'nullable|numeric|min:0',
+            'jumlah_dikerjakan' => 'required|integer|min:1',
+            'produk_id' => 'required|exists:produk,id_produk',
+            'salary' => 'required|numeric|min:1000',
         ]);
 
         DB::beginTransaction();
@@ -152,13 +203,10 @@ class CuttingKainController extends Controller
                 'jumlah_dikerjakan' => $request->jumlah_dikerjakan ?? 0,
             ];
 
-
             if ($request->filled('riwayat_cutting_kain_id')) {
-                // ✅ Update riwayat yang ada
                 $riwayat = RiwayatCuttingKain::findOrFail($request->riwayat_cutting_kain_id);
                 $riwayat->update($dataRiwayat);
             } else {
-                // ✅ Buat riwayat baru
                 $riwayat = RiwayatCuttingKain::create($dataRiwayat);
             }
 
