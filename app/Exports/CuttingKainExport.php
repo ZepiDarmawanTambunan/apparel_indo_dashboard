@@ -36,7 +36,8 @@ class CuttingKainExport implements WithEvents, WithTitle
             ->orderBy('cutting_kain.order_id')
             ->get();
 
-        $monthName = Carbon::create()->month($this->month)->translatedFormat('F');
+            $monthInt = Carbon::parse("1 $this->month $this->year")->month;
+            $monthName = Carbon::create()->month($monthInt)->translatedFormat('F');
 
         return [
             AfterSheet::class => function (AfterSheet $event) use ($cuttings, $monthName) {
@@ -76,7 +77,8 @@ class CuttingKainExport implements WithEvents, WithTitle
                 } else {
                     foreach ($cuttings as $index => $cutting) {
                         $sheet->setCellValue("A{$row}", $index + 1);
-                        $sheet->setCellValue("B{$row}", Carbon::parse($cutting->created_at)->format('d-m-Y'));
+                        $tglInput = Carbon::parse($cutting->created_at)->format('d-m-Y');
+                        $sheet->setCellValue("B{$row}", $tglInput);
                         $sheet->setCellValue("C{$row}", $cutting->cuttingKain->order_id ?? '-');
                         $sheet->setCellValue("D{$row}", $cutting->cuttingKain->status->nama ?? '-');
                         $sheet->setCellValue("E{$row}", $cutting->user_nama ?? '-');

@@ -31,7 +31,7 @@
                 <th>No</th>
                 <th>Tgl Input</th>
                 <th>ID Order</th>
-                <th>Kategori (Status)</th>
+                <th>Status</th>
                 <th>Petugas</th>
                 <th>Nama Barang</th>
                 <th>Jumlah Dikerjakan</th>
@@ -52,7 +52,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="no-data">Tidak ada data cutting kain untuk bulan ini.</td>
+                    <td colspan="8" class="no-data">Tidak ada data cutting kain untuk bulan ini.</td>
                 </tr>
             @endforelse
         </tbody>

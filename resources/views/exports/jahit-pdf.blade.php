@@ -31,7 +31,7 @@
                 <th>No</th>
                 <th>Tgl Input</th>
                 <th>ID Order</th>
-                <th>Kategori (Status)</th>
+                <th>Status</th>
                 <th>Petugas</th>
                 <th>Nama Barang</th>
                 <th>Jumlah Dikerjakan</th>
