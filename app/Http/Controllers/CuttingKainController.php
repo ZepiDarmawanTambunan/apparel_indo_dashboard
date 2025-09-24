@@ -161,7 +161,7 @@ class CuttingKainController extends Controller
             $riwayatCuttingKain->delete();
             DB::commit();
 
-            return redirect()->route('cutting-kain.show')->with('toast', [
+            return back()->with('toast', [
                 'type' => 'success',
                 'message' => 'Riwayat berhasil dibatalkan dan status diupdate.',
             ]);

@@ -334,6 +334,12 @@ function batalRiwayat(id: number) {
         accept: () => {
             router.put(route('cutting-kain.batal-riwayat', id), {}, {
                 preserveScroll: true,
+                onSuccess: () => {
+                    formCuttingKain.reset();
+                    selectedProduk.value = null;
+                    selectRiwayatCuttingKain.value = null;
+                    formCuttingKain.clearErrors();
+                },
                 onError: () => {
                     toast.error('Gagal membatalkan riwayat.')
                 }
