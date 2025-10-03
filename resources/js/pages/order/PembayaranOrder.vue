@@ -50,7 +50,8 @@ const tombolBatal = (id_pembayaran: String) => {
     rejectLabel: 'Batal',
     acceptClass: 'p-button-danger',
     accept: () => {
-      router.put(route('pembayaran.batal', { id_pembayaran }).toString(), {}, {
+        router.put(route('pembayaran.batal', { id_pembayaran }).toString(), {}, {
+        preserveScroll: true,
         preserveState: false,
         onSuccess: () => {},
         onError: (errors) => {
@@ -120,9 +121,9 @@ const onRowClick = (event: any) => {
             <div class="text-center text-gray-400 py-6">Belum ada pembayaran.</div>
           </template>
 
-          <Column field="created_at" header="Tanggal" sortable />
+          <Column field="created_at" header="Tgl" sortable />
           <Column field="id_pembayaran" header="ID Pembayaran" sortable />
-          <Column field="bayar" header="Nominal Bayar">
+          <Column field="bayar" header="Nominal">
             <template #body="{ data }">
               {{ formatCurrency(data.bayar) }}
             </template>
@@ -144,7 +145,7 @@ const onRowClick = (event: any) => {
               <button
                 v-if="data.status.nama !== 'Batal'"
                 @click="tombolBatal(data.id_pembayaran)"
-                class="px-3 py-2 text-sm font-medium text-white rounded bg-red-600 hover:bg-red-700"
+                class="px-3 py-2 text-sm font-medium text-white rounded bg-red-600 hover:bg-red-700 cursor-pointer"
               >
                 Batal
               </button>

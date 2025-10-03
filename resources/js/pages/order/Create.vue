@@ -5,6 +5,7 @@ import { ref, watch, computed, toRaw } from 'vue';
 import {DataTable, Column, Button, AutoComplete, InputNumber, DatePicker} from 'primevue';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'vue3-toastify';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
 
 interface Satuan {
     id: number;
@@ -65,8 +66,10 @@ interface Order {
 }
 
 const props = defineProps<{
-  produks: Produk[];
+    produks: Produk[];
+    breadcrumbs: { title: string; href?: string }[];
 }>();
+const breadcrumbs = props.breadcrumbs;
 const showItemInput = ref(false);
 const lainnya = ref<number>(0);
 const diskon = ref<number>(0);
@@ -373,8 +376,8 @@ const parseCurrency = (value: string): number => {
         <form @submit.prevent="submit">
             <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
-                    <h2 class="text-2xl font-semibold mb-6">Buat Order</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4">
+                    <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4 mt-5">
                         <div>
                             <label class="block mb-1 font-medium">Nama</label>
                             <input v-model="form.nama_pelanggan" type="text" class="w-full border rounded px-3 py-2" required />

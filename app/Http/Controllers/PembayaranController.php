@@ -302,7 +302,7 @@ class PembayaranController extends Controller
                 ->latest()
                 ->first();
             if ($pembayaranTerakhir->id_pembayaran !== $pembayaran->id_pembayaran) {
-                throw new \Exception('Harus membatalkan pembayaran terakhir terlebih dahulu.');
+                throw new \Exception('Anda harus membatalkan pembayaran terakhir terlebih dahulu.');
             }
 
             // Hitung ulang total pembayaran real setelah batal
@@ -329,14 +329,14 @@ class PembayaranController extends Controller
 
             DB::commit();
 
-            return redirect()->route('pembayaran.index')->with('toast', [
+            return back()->with('toast', [
                 'type' => 'success',
                 'message' => 'Pembayaran berhasil dibatalkan!',
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors([
-                'error' => 'Gagal membatalkan pembayaran: ' . $e->getMessage()
+                'error' => 'Gagal batal karena: ' . $e->getMessage()
             ]);
         }
     }

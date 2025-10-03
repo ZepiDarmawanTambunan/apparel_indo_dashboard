@@ -22,7 +22,8 @@ class OrderController extends Controller
     {
         $user = Auth::user();
         $breadcrumbs = [
-            ['title' => 'Daftar Order', 'href' => route('order.index')],
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
         ];
         $orders = Order::with(['status', 'statusPembayaran'])
             ->whereNull('deleted_at')
@@ -42,7 +43,13 @@ class OrderController extends Controller
 
     public function create()
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
+            ['title' => 'Buat', 'href' => route('order.create')],
+        ];
         return Inertia::render('order/Create', [
+            'breadcrumbs' => $breadcrumbs,
             'produks' => Produk::with(['kategori', 'satuan'])
                 ->where('stok', '>', 0)
                 ->get(),
@@ -60,6 +67,11 @@ class OrderController extends Controller
         ])
         ->where('id_order', $id_order)
         ->firstOrFail();
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
+            ['title' => 'Detil', 'href' => route('order.show', $order->id_order)],
+        ];
 
         $riwayatDataDesainTerakhir = null;
         if ($order->dataDesain) {
@@ -70,6 +82,7 @@ class OrderController extends Controller
         $order->riwayat_data_desain = $riwayatDataDesainTerakhir;
 
         return Inertia::render('order/Show', [
+            'breadcrumbs' => $breadcrumbs,
             'order' => $order,
         ]);
     }
@@ -92,16 +105,17 @@ class OrderController extends Controller
             'pembayaran.kategori',
             'pembayaran.status',
         ])->findOrFail($id_order);
-
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
+            ['title' => 'Detil', 'href' => route('order.show', $order->id_order)],
+            ['title' => 'Pembayaran', 'href' => route('order.pembayaran', $order->id_order)],
+        ];
 
         return Inertia::render('order/PembayaranOrder', [
+            'breadcrumbs' => $breadcrumbs,
             'order_id' => $order->id_order,
             'pembayarans' => $order->pembayaran,
-            'breadcrumbs' => [
-                ['title' => 'Order', 'href' => route('order.index')],
-                ['title' => $order->id_order, 'href' => route('order.show', $order->id_order)],
-                ['title' => 'Pembayaran'],
-            ],
         ]);
     }
 
@@ -110,13 +124,15 @@ class OrderController extends Controller
         $laporan_kerusakans = LaporanKerusakan::with(['order', 'status', 'statusChecking'])
             ->where('order_id', $id_order)
             ->get();
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
+            ['title' => 'Detil', 'href' => route('order.show', $id_order)],
+            ['title' => 'Kerusakan', 'href' => route('order.kerusakan', $id_order)],
+        ];
         return Inertia::render('order/KerusakanOrder', [
+            'breadcrumbs' => $breadcrumbs,
             'laporan_kerusakans' => $laporan_kerusakans,
-            'breadcrumbs' => [
-                ['title' => 'Order', 'href' => route('order.index')],
-                ['title' => $id_order, 'href' => route('order.show', $id_order)],
-                ['title' => 'Laporan Kerusakan'],
-            ],
         ]);
     }
 
@@ -276,11 +292,17 @@ class OrderController extends Controller
         ])
         ->where('id_order', $id_order)
         ->firstOrFail();
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Order', 'href' => route('order.index')],
+            ['title' => 'Edit', 'href' => route('order.edit', $id_order)],
+        ];
         $produks = Produk::with(['kategori', 'satuan'])
             ->where('stok', '>', 0)
             ->get();
 
         return Inertia::render('order/Edit', [
+            'breadcrumbs' => $breadcrumbs,
             'order' => $order,
             'produks' => $produks
         ]);

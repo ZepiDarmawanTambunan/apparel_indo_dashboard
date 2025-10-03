@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router, Link } from '@inertiajs/vue3';
 import { ref} from 'vue';
 import {DataTable, Column, InputNumber} from 'primevue';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
 
 interface Satuan {
     id: number;
@@ -61,11 +62,11 @@ interface Order {
 }
 
 const props = defineProps<{
-  order: Order;
+    order: Order;
+    breadcrumbs: { title: string; href?: string }[];
 }>();
 
-console.log(props.order);
-
+const breadcrumbs = props.breadcrumbs;
 const showItemInput = ref(false);
 const order = props.order;
 const expandedRows = ref({});
@@ -88,8 +89,8 @@ const formatCurrency = (value: number) : string => {
     <AppLayout>
         <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
-                <h2 class="text-2xl font-semibold mb-6">Order Detail</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center sm:text-left mb-4">
+                <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center sm:text-left my-5">
                     <div class="border rounded p-2">
                         <div class="text-gray-500 text-sm">Status Order</div>
                         <div class="font-semibold text-lg text-blue-600">

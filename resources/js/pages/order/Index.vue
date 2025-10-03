@@ -65,6 +65,7 @@ function tombolBatal(id_order: string) {
         accept: () => {
                 router.put(route('order.batal', { id_order: id_order }).toString(), {}, {
                 preserveState: false,
+                preserveScroll: true,
                 onSuccess: () => {},
                 onError: (errors) => {
                     if (errors.error) {
@@ -95,6 +96,7 @@ const onRowClick = (event: any) => {
       <div class="bg-white rounded-xl shadow-md p-6">
         <div class="mb-6 space-y-4">
             <Breadcrumbs :breadcrumbs="breadcrumbs" />
+
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                 <div class="flex flex-wrap gap-3">
                     <Link
@@ -136,7 +138,7 @@ const onRowClick = (event: any) => {
         </template>
           <Column field="id_order" header="ID" sortable />
           <Column field="nama_pelanggan" header="Pelanggan" sortable />
-          <Column field="tgl_deadline" header="Tgl Ambil" sortable />
+          <Column field="tgl_deadline" header="Tgl Deadline" sortable />
           <Column field="user_nama" header="Petugas" sortable />
           <Column field="status.nama" header="Status" sortable />
           <Column header="Aksi" :style="{ width: '260px' }">

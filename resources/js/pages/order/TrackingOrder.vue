@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{
   current_status: string;
@@ -24,6 +24,10 @@ const statusOrder = [
     'Selesai',
     'Batal',
 ];
+
+function goBack() {
+  router.visit(route('order.index'), { replace: true });
+}
 </script>
 
 <template>
@@ -67,12 +71,12 @@ const statusOrder = [
         </div>
 
         <div class="mt-8 text-center">
-        <Link
-        :href="route('order.show', 'ORD00001')"
-        class="inline-block w-full px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+        <button
+            @click="goBack"
+            class="inline-block w-full px-4 py-3 rounded-2xl bg-red-600 text-white font-semibold hover:bg-red-700 transition cursor-pointer"
         >
-        🔁 Lihat Detail Order
-        </Link>
+            Kembali
+        </button>
         </div>
       </div>
     </div>
