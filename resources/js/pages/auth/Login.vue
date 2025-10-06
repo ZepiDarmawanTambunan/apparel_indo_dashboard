@@ -27,6 +27,7 @@ const form = useForm({
 const submit = () => {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
+        replace: true,
     });
 };
 </script>
@@ -92,7 +93,7 @@ const submit = () => {
                     </Label>
                 </div>
 
-                <Button type="submit" class="mt-4 w-full" :tabindex="4" :disabled="form.processing">
+                <Button type="submit" class="mt-4 w-full cursor-pointer" :tabindex="4" :disabled="form.processing">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                     Masuk
                 </Button>

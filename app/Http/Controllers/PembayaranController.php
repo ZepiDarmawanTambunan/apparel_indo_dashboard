@@ -16,7 +16,8 @@ class PembayaranController extends Controller
     public function index()
     {
         $breadcrumbs = [
-            ['title' => 'Daftar Pembayaran', 'href' => route('pembayaran.index')],
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Pembayaran', 'href' => route('pembayaran.index')],
         ];
         $pembayarans = Pembayaran::with(['kategori', 'status', 'order'])
         ->whereNull('deleted_at')
@@ -24,7 +25,8 @@ class PembayaranController extends Controller
         ->get();
         return Inertia::render('pembayaran/Index', [
             'breadcrumbs' => $breadcrumbs,
-            'pembayarans' => $pembayarans
+            'pembayarans' => $pembayarans,
+            'key' => now()->timestamp,
         ]);
     }
 
@@ -33,14 +35,24 @@ class PembayaranController extends Controller
         $pembayaran = Pembayaran::with(['kategori', 'status', 'order', 'invoice.status'])
             ->where('id_pembayaran', $id_pembayaran)
             ->firstOrFail();
-
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Pembayaran', 'href' => route('pembayaran.index')],
+            ['title' => 'Detil', 'href' => route('pembayaran.show', $id_pembayaran)],
+        ];
         return Inertia::render('pembayaran/Show', [
             'pembayaran' => $pembayaran,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
     public function create()
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Pembayaran', 'href' => route('pembayaran.index')],
+            ['title' => 'Buat', 'href' => route('pembayaran.create')],
+        ];
         $kategoriPembayaranParent = Kategori::where('nama', 'Kategori Pembayaran')->first();
 
         // Status Order
@@ -56,6 +68,7 @@ class PembayaranController extends Controller
             'kategori' => Kategori::select('id', 'nama')
                             ->where('parent_id', $kategoriPembayaranParent->id)
                             ->get(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -158,6 +171,11 @@ class PembayaranController extends Controller
 
     public function edit($id_pembayaran)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Pembayaran', 'href' => route('pembayaran.index')],
+            ['title' => 'Edit', 'href' => route('pembayaran.edit', $id_pembayaran)],
+        ];
         $kategoriPembayaranParent = Kategori::where('nama', 'Kategori Pembayaran')->first();
         $pembayaran = Pembayaran::with(['order', 'kategori'])->findOrFail($id_pembayaran);
 
@@ -178,6 +196,7 @@ class PembayaranController extends Controller
                 'order' => $pembayaran->order,
             ],
             'kategori' => $kategoriQuery->get(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

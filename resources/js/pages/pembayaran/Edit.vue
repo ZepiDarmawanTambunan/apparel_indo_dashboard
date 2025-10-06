@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import {ref, watch, computed} from 'vue';
 import {Select} from 'primevue';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
 
 interface Kategori {
     id: number;
@@ -34,8 +35,9 @@ interface Pembayaran {
 }
 
 const props = defineProps<{
-    pembayaran: Pembayaran,
-    kategori: Kategori[],
+    pembayaran: Pembayaran;
+    kategori: Kategori[];
+    breadcrumbs: { title: string; href?: string }[];
 }>();
 
 const {pembayaran} = props;
@@ -136,8 +138,8 @@ watch(() => form.bayar, () => {
         <form @submit.prevent="submit">
             <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
-                    <h2 class="text-2xl font-semibold mb-6">Pembayaran</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4">
+                    <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 space-y-4 mt-6">
                         <div>
                             <label class="block mb-1 font-medium">Order ID</label>
                             <input :value="pembayaran.order?.id_order" readonly class="w-full border rounded px-3 py-2" />

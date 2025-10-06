@@ -93,6 +93,7 @@ class OrderController extends Controller
 
         return Inertia::render('order/TrackingOrder', [
             'current_status' => $order->status->nama,
+            'order_id' => $order->id_order,
         ]);
     }
 

@@ -3,7 +3,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 
 const props = defineProps<{
-  current_status: string;
+    current_status: string;
+    order_id: string;
 }>();
 
 const statusOrder = [
@@ -26,7 +27,7 @@ const statusOrder = [
 ];
 
 function goBack() {
-  router.visit(route('order.index'), { replace: true });
+  router.visit(route('order.show', { id: props.order_id }), { replace: true });
 }
 </script>
 

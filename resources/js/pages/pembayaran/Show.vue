@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { toast } from 'vue3-toastify';
 import {useConfirm, ConfirmDialog} from 'primevue';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
 
 interface Kategori {
     id: number;
@@ -42,7 +43,8 @@ interface Pembayaran {
 }
 
 const props = defineProps<{
-    pembayaran: Pembayaran,
+    pembayaran: Pembayaran;
+    breadcrumbs: { title: string; href?: string }[];
 }>();
 
 // START HANDLE CONFIRMATION
@@ -89,9 +91,9 @@ const formatCurrency = (value: number) => {
         <div class="py-8 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
 
-                <h2 class="text-3xl font-semibold mb-8 text-gray-800">Detail Pembayaran</h2>
+                <Breadcrumbs :breadcrumbs="breadcrumbs" />
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-gray-700">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-gray-700 mt-6">
                     <div>
                         <p class="text-sm text-gray-500">Order ID</p>
                         <p class="font-semibold">{{ pembayaran.order.id_order}}</p>
