@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, useForm, router, Link } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import {DataTable, Column, useConfirm, ConfirmDialog} from 'primevue';
 import { toast } from 'vue3-toastify';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
@@ -86,6 +86,13 @@ const onRowClick = (event: any) => {
     router.get(route('order.show', order.id_order));
 };
 // END HELPER FUNCTIONS
+
+onMounted(() => {
+  window.addEventListener('popstate', () =>{
+    console.log('reload');
+    window.location.reload();
+  })
+})
 </script>
 
 <template>

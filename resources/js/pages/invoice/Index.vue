@@ -5,6 +5,7 @@ import { ref, computed } from 'vue';
 import {DataTable, Column, useConfirm, ConfirmDialog} from 'primevue';
 import { toast } from 'vue3-toastify';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import { onMounted } from 'vue';
 
 interface Kategori {
   id: number;
@@ -75,6 +76,13 @@ const tombolBatal = (id_invoice: String) => {
     });
 };
 //  END HANDLE CONFIRM DIALOG
+
+onMounted(() => {
+  window.addEventListener('popstate', () =>{
+    console.log('reload');
+    window.location.reload();
+  })
+})
 </script>
 
 <template>

@@ -17,7 +17,8 @@ class InvoiceController extends Controller
     public function index()
     {
         $breadcrumbs = [
-            ['title' => 'Daftar Invoice', 'href' => route('invoice.index')],
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Invoice', 'href' => route('invoice.index')],
         ];
         $invoices = Invoice::with([
             'kategori',
