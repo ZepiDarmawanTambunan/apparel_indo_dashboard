@@ -5,6 +5,7 @@ import { defineProps, ref, computed } from 'vue';
 import { DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
 import { Head, router } from '@inertiajs/vue3';
 import { toast } from 'vue3-toastify';
+import { onMounted } from 'vue';
 
 interface Kategori {
   id: number;
@@ -74,6 +75,13 @@ const tombolBatal = (id: string) => {
         }
     });
 };
+
+onMounted(() => {
+  window.addEventListener('popstate', () =>{
+    console.log('reload');
+    window.location.reload();
+  })
+})
 </script>
 
 <template>

@@ -17,10 +17,8 @@ class DesainDataController extends Controller
     public function index()
     {
         $breadcrumbs = [
-            [
-                'title' => 'Desain & Data',
-                'href' => route('desain-data.index')
-            ],
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Desain Data', 'href' => route('desain-data.index')],
         ];
         $dataDesain = DataDesain::with(['order', 'status'])
         ->whereNull('deleted_at')
@@ -35,6 +33,11 @@ class DesainDataController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Desain Data', 'href' => route('desain-data.index')],
+            ['title' => 'Detil', 'href' => route('desain-data.show', $id)],
+        ];
         $dataDesain = DataDesain::with([
             'order.status',
             'order.statusPembayaran',
@@ -44,6 +47,7 @@ class DesainDataController extends Controller
 
         $users = User::select('id', 'nama')->get();
         return Inertia::render('desain-data/Show', [
+            'breadcrumbs' => $breadcrumbs,
             'data_desain' => $dataDesain,
             'users' => $users,
         ]);
