@@ -19,6 +19,7 @@ class CuttingKainController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Cutting Kain', 'href' => route('cutting-kain.index')],
         ];
 
@@ -34,6 +35,12 @@ class CuttingKainController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Cutting Kain', 'href' => route('cutting-kain.index')],
+            ['title' => 'Detil', 'href' => route('cutting-kain.show', $id)],
+        ];
+
         $cuttingKain = CuttingKain::with([
             'order.orderDetail.produk.salaries',
             'order.orderDetail.orderTambahan.produk.salaries',
@@ -87,6 +94,7 @@ class CuttingKainController extends Controller
             'users' => $users,
             'produks' => $produks,
             'laporan_kerusakan' => $laporanKerusakan,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

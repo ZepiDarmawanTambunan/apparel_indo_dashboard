@@ -14,6 +14,7 @@ class CheckingController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Checking', 'href' => route('checking.index')],
         ];
 
@@ -33,6 +34,12 @@ class CheckingController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Checking', 'href' => route('checking.index')],
+            ['title' => 'Detil', 'href' => route('checking.show', $id)],
+        ];
+
         $laporanKerusakan = LaporanKerusakan::with([
             'order.status',
             'order.statusPembayaran',
@@ -53,6 +60,7 @@ class CheckingController extends Controller
         return Inertia::render('checking/Show', [
             'divisi_bertanggung_jawab' => $divisi_bertanggung_jawab,
             'laporan_kerusakan' => $laporanKerusakan,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 }

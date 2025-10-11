@@ -19,6 +19,7 @@ class JahitController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Jahit', 'href' => route('jahit.index')],
         ];
 
@@ -34,6 +35,12 @@ class JahitController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Jahit', 'href' => route('jahit.index')],
+            ['title' => 'Detil', 'href' => route('jahit.show', $id)],
+        ];
+
         $jahit = Jahit::with([
             'order.orderDetail.produk.salaries',
             'order.orderDetail.orderTambahan.produk.salaries',
@@ -87,6 +94,7 @@ class JahitController extends Controller
             'users' => $users,
             'produks' => $produks,
             'laporan_kerusakan' => $laporanKerusakan,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

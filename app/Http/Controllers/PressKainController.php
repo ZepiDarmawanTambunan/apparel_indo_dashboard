@@ -17,6 +17,7 @@ class PressKainController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Press Kain', 'href' => route('press-kain.index')],
         ];
 
@@ -32,6 +33,12 @@ class PressKainController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Press Kain', 'href' => route('press-kain.index')],
+            ['title' => 'Detil', 'href' => route('press-kain.show', $id)],
+        ];
+
         $pressKain = PressKain::with([
             'order.status',
             'order.statusPembayaran',
@@ -48,6 +55,7 @@ class PressKainController extends Controller
             'press_kain' => $pressKain,
             'laporan_kerusakan' => $laporanKerusakan,
             'users' => $users,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

@@ -4,6 +4,7 @@ import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import {computed, ref, watch} from 'vue';
 import {Select, DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
 import { toast } from 'vue3-toastify';
+import Breadcrumbs from '@/components/Breadcrumbs.vue';
 
 interface Kategori {
     id: number;
@@ -112,10 +113,11 @@ interface Salary {
 const props = defineProps<{
     cutting_kain: CuttingKain & {
         riwayat_cutting_kain: RiwayatCuttingKain[],
-    },
-    users: User[],
-    produks: Produk[],
-    laporan_kerusakan: LaporanKerusakan[],
+    };
+    users: User[];
+    produks: Produk[];
+    laporan_kerusakan: LaporanKerusakan[];
+    breadcrumbs: { title: string; href?: string }[];
 }>();
 
 const filteredUser = ref<User[]>([...props.users]);
@@ -387,8 +389,8 @@ const parseCurrency = (value: string): number => {
     <AppLayout>
         <div class="py-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
-                <h2 class="text-2xl font-semibold mb-6">Detail Cutting Kain</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                     <div>
                         <label class="block mb-1 font-medium">Order ID</label>
                         <input :value="cutting_kain.order?.id_order" readonly class="w-full border rounded px-3 py-2" />

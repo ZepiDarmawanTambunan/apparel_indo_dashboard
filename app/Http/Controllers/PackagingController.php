@@ -18,6 +18,7 @@ class PackagingController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Packaging', 'href' => route('packaging.index')],
         ];
 
@@ -33,6 +34,12 @@ class PackagingController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Packaging', 'href' => route('packaging.index')],
+            ['title' => 'Detil', 'href' => route('packaging.show', $id)],
+        ];
+
         $packaging = Packaging::with([
             'order.status',
             'order.statusPembayaran',
@@ -49,6 +56,7 @@ class PackagingController extends Controller
             'packaging' => $packaging,
             'laporan_kerusakan' => $laporanKerusakan,
             'users' => $users,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

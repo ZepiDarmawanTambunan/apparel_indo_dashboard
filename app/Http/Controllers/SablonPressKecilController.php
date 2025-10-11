@@ -18,6 +18,7 @@ class SablonPressKecilController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Sablon Press Kecil', 'href' => route('sablon-press-kecil.index')],
         ];
 
@@ -33,6 +34,12 @@ class SablonPressKecilController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Sablon Press Kecil', 'href' => route('sablon-press-kecil.index')],
+            ['title' => 'Detil', 'href' => route('sablon-press-kecil.show', $id)],
+        ];
+
         $sablonPress = SablonPress::with([
             'order.status',
             'order.statusPembayaran',
@@ -49,6 +56,7 @@ class SablonPressKecilController extends Controller
             'sablon_press' => $sablonPress,
             'laporan_kerusakan' => $laporanKerusakan,
             'users' => $users,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import { defineProps, ref, computed } from 'vue';
+import { defineProps, ref, computed, onMounted } from 'vue';
 import { DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
 import { Head, router } from '@inertiajs/vue3';
 import { toast } from 'vue3-toastify';
@@ -67,6 +67,13 @@ const batalPackaging = (id: string) => {
         },
     });
 };
+
+onMounted(() => {
+  window.addEventListener('popstate', () =>{
+    console.log('reload');
+    window.location.reload();
+  })
+})
 </script>
 
 <template>

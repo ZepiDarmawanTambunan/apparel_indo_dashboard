@@ -17,6 +17,7 @@ class CetakPrintController extends Controller
     public function index()
     {
         $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Cetak & Print', 'href' => route('cetak-print.index')],
         ];
 
@@ -32,6 +33,11 @@ class CetakPrintController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'Cetak & Print', 'href' => route('cetak-print.index')],
+            ['title' => 'Detil', 'href' => route('cetak-print.show', $id)],
+        ];
         $cetakPrint = CetakPrint::with([
             'order.status',
             'order.statusPembayaran',
@@ -46,6 +52,7 @@ class CetakPrintController extends Controller
             'cetak_print' => $cetakPrint,
             'laporan_kerusakan' => $laporanKerusakan,
             'users' => $users,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

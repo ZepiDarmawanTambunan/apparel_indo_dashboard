@@ -5,6 +5,7 @@ import { ref, computed } from 'vue';
 import {DataTable, Column, Button} from 'primevue';
 import { toast } from 'vue3-toastify';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import { onMounted } from 'vue';
 
 interface Kategori {
   id: number;
@@ -49,6 +50,13 @@ const filteredLaporanKerusakan = computed(() => {
     lpk.order?.nama_pelanggan?.toLowerCase().includes(search.value.toLowerCase())
   );
 });
+
+onMounted(() => {
+  window.addEventListener('popstate', () =>{
+    console.log('reload');
+    window.location.reload();
+  })
+})
 </script>
 
 <template>

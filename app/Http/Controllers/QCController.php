@@ -18,7 +18,8 @@ class QCController extends Controller
     public function index()
     {
         $breadcrumbs = [
-            ['title' => 'Quality Control', 'href' => route('qc.index')],
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'QC', 'href' => route('qc.index')],
         ];
 
         $qc = QC::with(['order', 'status'])
@@ -33,6 +34,12 @@ class QCController extends Controller
 
     public function show($id)
     {
+        $breadcrumbs = [
+            ['title' => 'Menu', 'href' => route('dashboard')],
+            ['title' => 'QC', 'href' => route('qc.index')],
+            ['title' => 'Detil', 'href' => route('qc.show', $id)],
+        ];
+
         $qc = QC::with([
             'order.status',
             'order.statusPembayaran',
@@ -49,6 +56,7 @@ class QCController extends Controller
             'qc' => $qc,
             'laporan_kerusakan' => $laporanKerusakan,
             'users' => $users,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
