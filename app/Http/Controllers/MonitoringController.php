@@ -36,6 +36,7 @@ class MonitoringController extends Controller
         $orders = Order::with('status')
             ->whereHas('status', function ($query) {
                 $query->whereIn('nama', [
+                    'Desain Data',
                     'Cetak & Print',
                     'Press Kain',
                     'Cutting Kain',
