@@ -23,6 +23,9 @@ return new class extends Migration
             $table->unsignedBigInteger('status_checking_id');
             $table->string('pelapor_nama')->nullable();
             $table->unsignedBigInteger('pelapor_id')->nullable();
+            $table->string('produk_id')->nullable();
+            $table->string('produk_nama')->nullable();
+            $table->unsignedInteger('produk_harga')->default(0);
 
             $table->unsignedInteger('jumlah_rusak')->default(0);
             $table->string('divisi_bertanggung_jawab')->nullable();
@@ -32,6 +35,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('set null');
             $table->foreign('order_id')->references('id_order')->on('order')->onDelete('cascade');
             $table->foreign('pelapor_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade');
