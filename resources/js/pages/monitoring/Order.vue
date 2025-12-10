@@ -52,28 +52,35 @@ let scrollInterval: ReturnType<typeof setInterval> | null = null;
 let refreshInterval: ReturnType<typeof setInterval> | null = null;
 
 const startAutoScroll = () => {
-  scrollInterval = setInterval(() => {
-    [paymentQueueRef.value, designQueueRef.value, productionQueueRef.value].forEach(container => {
-      if (container) {
-        container.scrollTop += 1;
-        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-          container.scrollTop = 0;
-        }
-      }
-    });
-  }, 100);
+    scrollInterval = setInterval(() => {
+        [paymentQueueRef.value, designQueueRef.value, productionQueueRef.value].forEach(container => {
+            if (!container) return;
+                const maxScroll = container.scrollHeight - container.clientHeight;
+            if (container.scrollTop >= maxScroll - 2) {
+                container.scrollTop = 0;
+            } else {
+                container.scrollTop += 1;
+            }
+        });
+    }, 30);
+};
+
+const resetAllScroll = () => {
+  [paymentQueueRef.value, designQueueRef.value, productionQueueRef.value].forEach(container => {
+    if (container) container.scrollTop = 0;
+  });
 };
 
 const startAutoRefresh = () => {
-  refreshInterval = setInterval(() => {
-    router.reload({
-      only: ['pembayarans', 'desainDatas', 'orders'],
-    });
-  }, 5000);
+    refreshInterval = setInterval(() => {
+        router.reload({
+            only: ['pembayarans', 'desainDatas', 'orders'],
+        });
+    }, 5000);
 };
 
 onMounted(() => {
-    document.documentElement.requestFullscreen?.();
+    // document.documentElement.requestFullscreen?.();
     startAutoScroll();
     startAutoRefresh();
 });
@@ -92,7 +99,9 @@ onBeforeUnmount(() => {
         <div class="bg-white rounded-xl shadow-lg overflow-hidden h-[calc(100vh-160px)]">
             <div class="bg-red-500 text-white p-4 font-bold flex justify-between">
                 <span><i class="fas fa-money-bill-wave mr-2"></i>Antrian Pembayaran</span>
-                <span class="bg-white text-red-500 px-3 py-1 rounded-full text-xs">{{ pembayarans.length }} Order</span>
+                <span class="bg-white text-red-500 px-3 py-1 rounded-full text-xs">
+                    {{ pembayarans.length }} Order
+                </span>
             </div>
             <div ref="paymentQueueRef" class="queue-container h-[calc(100%_-_54px)] overflow-y-auto p-3">
                 <div v-for="item in pembayarans" :key="item.id_pembayaran" class="order-card bg-white border p-4 mb-3 rounded-lg">
@@ -118,7 +127,7 @@ onBeforeUnmount(() => {
             <div class="bg-amber-500 text-white p-4 font-bold flex justify-between">
                 <span><i class="fas fa-pencil-ruler mr-2"></i>Antrian Desain</span>
                 <span class="bg-white text-amber-500 px-3 py-1 rounded-full text-xs">
-                {{ desainDatas.length }} Order
+                    {{ desainDatas.length }} Order
                 </span>
             </div>
             <div ref="designQueueRef" class="queue-container h-[calc(100%_-_54px)] overflow-y-auto p-3">
@@ -178,28 +187,29 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.order-card {
-  transition: all 0.3s ease;
-}
-.order-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-.status-badge {
-  border-radius: 9999px;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-.queue-container::-webkit-scrollbar {
-  width: 4px;
-}
-.queue-container::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 5px;
-}
-.queue-container {
-  scroll-behavior: smooth;
-}
+    .order-card {
+        transition: all 0.3s ease;
+    }
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .status-badge {
+        border-radius: 9999px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+    .queue-container::-webkit-scrollbar {
+        width: 4px;
+    }
+    .queue-container::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 5px;
+    }
+    .queue-container {
+        scroll-behavior: auto;
+        /* scroll-behavior: smooth; */
+    }
 </style>

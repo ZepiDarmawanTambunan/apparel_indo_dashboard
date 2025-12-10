@@ -7,8 +7,6 @@ use App\Models\Kategori;
 use App\Models\Order;
 use App\Models\Pembayaran;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class MonitoringController extends Controller
 {
