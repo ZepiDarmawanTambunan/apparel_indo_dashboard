@@ -64,6 +64,7 @@ class PembayaranController extends Controller
             'orders' => Order::with(['statusPembayaran', 'status'])
                             ->whereNotIn('status_id', [$statusBatalId, $statusSelesaiId])
                             ->whereNotIn('status_pembayaran_id', [$statusPembayaranId])
+                            ->orderBy('created_at', 'desc')
                             ->get(),
             'kategori' => Kategori::select('id', 'nama')
                             ->where('parent_id', $kategoriPembayaranParent->id)
@@ -87,6 +88,17 @@ class PembayaranController extends Controller
         try {
             $order = Order::lockForUpdate()->findOrFail($validated['order_id']);
             $user = Auth::user();
+
+            // CEK jika masih ada pembayaran yg belum ACC
+            $pendingPembayaran = Pembayaran::where('order_id', $order->id_order)
+                ->whereHas('status', function ($q) {
+                    $q->where('nama', 'Menunggu ACC');
+                })
+                ->exists();
+
+            if ($pendingPembayaran) {
+                throw new \Exception('Masih ada antrian pembayaran yang belum diselesaikan.');
+            }
 
             // Hitung => order.total_pembayaran + (bayar - kembaliian)
             $totalPembayaranBaru = min($order->total_pembayaran + ($validated['bayar'] - $validated['kembalian']), $order->total);
@@ -120,6 +132,12 @@ class PembayaranController extends Controller
             // Tentukan invoice.status & invoice.kategori
             $statusInvoiceId = Kategori::getKategoriId('Status Invoice', 'Proses');
             $kategoriInvoiceId = Kategori::getKategoriId('Kategori Invoice', $kategori->nama);
+            $sub_total = $order->sub_total;
+            $diskon = $order->diskon;
+            $lainnya = $order->lainnya;
+            $total = $order->total;
+            $sisa_bayar_sblm_pembayaran = $order->sisa_bayar;
+            $total_pembayaran_sblm_pembayaran = $order->total_pembayaran;
 
             // Create pembayaran
             $pembayaran = Pembayaran::create([
@@ -146,6 +164,20 @@ class PembayaranController extends Controller
                 'pembayaran_id' => $pembayaran->id_pembayaran,
                 'kategori_id' => $kategoriInvoiceId,
                 'status_id' => $statusInvoiceId,
+
+                'sub_total' => $sub_total,
+                'diskon' => $diskon,
+                'lainnya' => $lainnya,
+                'total' => $total,
+
+                'bayar' => $validated['bayar'],
+                'kembalian' => $validated['kembalian'],
+
+                'sisa_bayar_sblm_pembayaran' => $sisa_bayar_sblm_pembayaran,
+                'total_pembayaran_sblm_pembayaran' => $total_pembayaran_sblm_pembayaran,
+
+                'sisa_bayar' => $order->sisa_bayar,
+                'total_pembayaran' => $totalPembayaranBaru,
             ]);
 
             // Update order
@@ -164,7 +196,7 @@ class PembayaranController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return back()->withErrors([
-                'error' => 'Gagal menyimpan pembayaran: ' . $e->getMessage()
+                'error' => $e->getMessage()
             ]);
         }
     }

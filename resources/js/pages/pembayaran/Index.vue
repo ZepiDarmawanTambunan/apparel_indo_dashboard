@@ -150,7 +150,7 @@ onMounted(() => {
                 </div>
             </template>
             <Column field="order_id" header="ID" sortable />
-            <Column field="created_at" header="Tgl" sortable />
+            <Column field="created_at_format" header="Tgl" sortable />
             <Column field="order.nama_pelanggan" header="Pelanggan" sortable />
             <Column field="bayar" header="Nominal">
                 <template #body="{ data }">

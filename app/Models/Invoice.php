@@ -24,6 +24,9 @@ class Invoice extends Model
         'user_nama',
         'user_id',
         'keterangan',
+        'total_bayar_sebelumnya',
+        'total_bayar_sekarang',
+        'sisa_bayar',
     ];
 
     // START RELASI

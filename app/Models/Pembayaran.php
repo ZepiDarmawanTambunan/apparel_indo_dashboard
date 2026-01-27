@@ -29,7 +29,7 @@ class Pembayaran extends Model implements HasMedia
         'user_id',
     ];
 
-    protected $appends = ['bukti_pembayaran'];
+    protected $appends = ['bukti_pembayaran', 'created_at_format'];
 
     public function registerMediaCollections(): void
     {
@@ -66,19 +66,17 @@ class Pembayaran extends Model implements HasMedia
     }
     // END RELASI
 
-    // START ACCESSOR
-    protected function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value ? Carbon::parse($value)->format('d-m-Y') : null,
-        );
-    }
-    //  END ACCESSOR
-
     //  START MUTATOR
     public function getBuktiPembayaranAttribute()
     {
         return $this->getFirstMediaUrl('bukti_pembayaran');
+    }
+
+    public function getCreatedAtFormatAttribute()
+    {
+        return $this->created_at
+            ? $this->created_at->format('d-m-Y')
+            : null;
     }
     //  END MUTATOR
 }

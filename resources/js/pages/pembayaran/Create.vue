@@ -70,7 +70,14 @@ function submit() {
         onSuccess: () => {
         },
         onError: (errors) => {
-            toast.error('Gagal. Masih ada data yang kosong', {
+            let message = '';
+            if (errors.error) {
+                message = errors.error;
+            }
+            else {
+                message = "Masih ada data yang kosong atau tidak valid.";
+            }
+            toast.error(message, {
                 autoClose: 5000,
                 position: 'top-right',
             });
@@ -149,12 +156,12 @@ function filterKategoriByStatusPembayaran(statusPembayaran: string) {
     const lowerStatus = statusPembayaran.toLowerCase();
 
     // JIKA ORDER BELUM ADA ITEM
-    if (selectedOrderSisaBayar.value <= 0) {
-        filteredKategori.value = kategori.filter(k =>
-            k.nama.toLowerCase() === 'dp awal',
-        );
-        return;
-    }
+    // if (selectedOrderSisaBayar.value <= 0) {
+    //     filteredKategori.value = kategori.filter(k =>
+    //         k.nama.toLowerCase() === 'dp awal',
+    //     );
+    //     return;
+    // }
 
     if (lowerStatus === 'belum bayar') {
         // JIKA ORDER BELUM BAYAR

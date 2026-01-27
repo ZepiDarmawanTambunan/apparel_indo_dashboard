@@ -65,12 +65,6 @@ const startAutoScroll = () => {
     }, 30);
 };
 
-const resetAllScroll = () => {
-  [paymentQueueRef.value, designQueueRef.value, productionQueueRef.value].forEach(container => {
-    if (container) container.scrollTop = 0;
-  });
-};
-
 const startAutoRefresh = () => {
     refreshInterval = setInterval(() => {
         router.reload({
@@ -79,8 +73,17 @@ const startAutoRefresh = () => {
     }, 5000);
 };
 
+const isFullscreen = () => !!document.fullscreenElement;
+
+const toggleFullscreen = () => {
+    if (!isFullscreen()) {
+        document.documentElement.requestFullscreen?.();
+    } else {
+        document.exitFullscreen?.();
+    }
+};
+
 onMounted(() => {
-    // document.documentElement.requestFullscreen?.();
     startAutoScroll();
     startAutoRefresh();
 });
@@ -93,7 +96,21 @@ onBeforeUnmount(() => {
 
 <template>
   <Head title="Deadline" />
-
+    <button
+        v-if="!isFullscreen()"
+        @click="toggleFullscreen"
+        class="fixed top-4 right-4 px-4 py-3 bg-black text-white
+            rounded-md shadow-lg hover:bg-gray-900 transition z-50 cursor-pointer"
+        title="Fullscreen"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 text-white"
+            fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 8V4h4M4 4l6 6M20 16v4h-4m4 0l-6-6M16 4h4v4M20 4l-6 6M4 16v4h4M4 20l6-6" />
+        </svg>
+    </button>
     <div class="h-screen p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
         <!-- Antrian Pembayaran -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden h-[calc(100vh-160px)]">

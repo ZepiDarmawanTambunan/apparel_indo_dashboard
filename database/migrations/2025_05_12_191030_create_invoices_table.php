@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('status_id');
             $table->string('user_nama')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('total_bayar_sebelumnya')->default(0);
+            $table->unsignedBigInteger('total_bayar_sekarang')->default(0);
+            $table->unsignedBigInteger('sisa_bayar')->default(0);
             $table->text('keterangan')->nullable();
             $table->timestamps();
             $table->softDeletes();

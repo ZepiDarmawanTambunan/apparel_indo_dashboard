@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Invoice</title>
+  @php
+    $logo = base64_encode(file_get_contents(public_path('images/logo.JPG')));
+  @endphp
   <style>
     body {
       font-family: sans-serif;
@@ -18,7 +21,7 @@
       transform: translate(-50%, -185%);
       width: 300px;
       height: 300px;
-      background-image: url('{{ public_path("images/logo.JPG") }}');
+      background-image: url('data:image/jpg;base64,{{ $logo }}');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -78,7 +81,7 @@
 
   <div>
     <p><strong>Nama Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
-    <p><strong>Tanggal:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
+    <p><strong>Tgl Bayar:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
     <p>
         <strong>Jenis Invoice:</strong>
         <span style="color:red; font-weight:bold;">
@@ -116,12 +119,16 @@
     </table>
   </div>
 
+  @php
+    $orderDetails = collect($invoice->order->orderDetail ?? []);
+  @endphp
+
   <div class="mt-2">
     <strong>Tambahan:</strong>
     <ul>
-        @forelse (collect($invoice->order->orderDetail ?? [])->pluck('order_tambahan')->flatten() as $tambahan)
+        @forelse (collect($invoice->order->orderDetail ?? [])->pluck('orderTambahan')->flatten() as $tambahan)
             @if ($tambahan)
-                <li>{{ $tambahan->nama }} - Rp. {{ number_format($tambahan->harga, 0, ',', '.') }}</li>
+                <li>{{ $tambahan->nama }} - {{ $tambahan->qty }} qty - Rp. {{ number_format($tambahan->total, 0, ',', '.') }}</li>
             @endif
         @empty
             <li>Tidak ada tambahan.</li>
@@ -135,39 +142,87 @@
 
   @php
     $orderDetail = optional($invoice->order)->orderDetail ?? collect();
+    $subTotal = $orderDetail->sum(fn($i) => $i->qty * $i->harga);
+    $lainnya = optional($invoice->order)->lainnya ?? 0;
+    $diskon = optional($invoice->order)->diskon ?? 0;
+
+    // Total harga fix
+    $total = $subTotal + $lainnya - $diskon;
+
+    // Pembayaran sekarang
+    $bayarSekarang = optional($invoice->pembayaran)->bayar ?? 0;
+    $kembalian = optional($invoice->pembayaran)->kembalian ?? 0;
+
+    // semua pembayaran yang tidak batal
+    $semuaPembayaran = ($invoice->order->pembayaran ?? collect())
+        ->filter(fn($p) => optional($p->status)->nama !== 'Batal');
+
+    // pembayaran sebelum invoice ini
+    $pembayaranSebelumnya = $semuaPembayaran
+        ->where('created_at', '<', $invoice->pembayaran->created_at)
+        ->sum(fn($p) => $p->bayar - $p->kembalian);
+
+    // Tentukan total bayar saat invoice ini dibuat
+    $totalBayarSebelumnyaSekarang = $pembayaranSebelumnya + $bayarSekarang;
+
+    // Sisa bayar saat invoice ini dibuat
+    $sisaBayarFinal = max($total - $totalBayarSebelumnyaSekarang, 0);
   @endphp
 
-  <div class="mt-2">
-    <table>
-      <tr>
-        <td><strong>Sub Total</strong></td>
-        <td class="text-right">Rp. {{ number_format($orderDetail->sum(fn($i) => $i->qty * $i->harga), 0, ',', '.') }}</td>
-      </tr>
-      <tr>
-        <td><strong>Lainnya</strong></td>
-        <td class="text-right">Rp. {{ number_format(optional($invoice->order)->lainnya ?? 0, 0, ',', '.') }}</td>
-      </tr>
-      <tr>
-        <td><strong>Diskon</strong></td>
-        <td class="text-right">Rp. {{ number_format(optional($invoice->order)->diskon ?? 0, 0, ',', '.') }}</td>
-      </tr>
-      <tr>
-        <td><strong>Total</strong></td>
-        <td class="text-right">Rp. {{ number_format(optional($invoice->order)->total ?? 0, 0, ',', '.') }}</td>
-      </tr>
-      <tr>
-        <td><strong>Bayar</strong></td>
-        <td class="text-right">Rp. {{ number_format(optional($invoice->pembayaran)->bayar ?? 0, 0, ',', '.') }}</td>
-      </tr>
-      <tr>
-        <td><strong>Kembalian</strong></td>
-        <td class="text-right">Rp. {{ number_format(optional($invoice->pembayaran)->kembalian ?? 0, 0, ',', '.') }}</td>
-      </tr>
-    </table>
-  </div>
+    <div class="mt-2">
+        <table>
+            <tr>
+                <td><strong>Sub Total</strong></td>
+                <td class="text-right">Rp. {{ number_format($subTotal, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Lainnya</strong></td>
+                <td class="text-right">Rp. {{ number_format($lainnya, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Diskon</strong></td>
+                <td class="text-right">- Rp. {{ number_format($diskon, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td class="text-right">Rp. {{ number_format($total, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+    </div>
 
-  <div class="mt-2">
-    <p><strong>Kasir:</strong> {{ optional($invoice->order)->user_nama ?? '-' }}</p>
-  </div>
+    <div class="mt-2">
+        <table>
+            <tr>
+                <td><strong>Bayar Sekarang</strong></td>
+                <td class="text-right">Rp. {{ number_format($bayarSekarang, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Kembalian</strong></td>
+                <td class="text-right">Rp. {{ number_format($kembalian, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mt-2">
+        <table>
+            <tr>
+                <td><strong>T. Bayar Sebelumnya + Bayar Sekarang</strong></td>
+                <td class="text-right">Rp. {{ number_format($totalBayarSebelumnyaSekarang, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Sisa Bayar Akhir</strong></td>
+                <td class="text-right">Rp. {{ number_format($sisaBayarFinal, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="mt-2">
+        <p><strong>Kasir:</strong> {{ optional($invoice->order)->user_nama ?? '-' }}</p>
+
+        <p>
+            <strong>Waktu:</strong>
+            {{ \Carbon\Carbon::now()->translatedFormat('d-m-Y - H:i:s') }}
+        </p>
+    </div>
 </body>
 </html>

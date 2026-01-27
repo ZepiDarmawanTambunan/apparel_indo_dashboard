@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { ref, watch, computed, toRaw } from 'vue';
-import {DataTable, Column, Button, AutoComplete, InputNumber, DatePicker} from 'primevue';
+import {DataTable, Column, AutoComplete, InputNumber, DatePicker} from 'primevue';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'vue3-toastify';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
@@ -392,6 +392,7 @@ const parseCurrency = (value: string): number => {
                             <label class="block mb-1 font-medium">Tanggal Ambil</label>
                             <DatePicker
                                 v-model="tglDeadlineDate"
+                                :min-date="new Date(new Date().setDate(new Date().getDate() - 3))"
                                 dateFormat="dd-mm-yy"
                                 showMonthNavigator
                                 showYearNavigator

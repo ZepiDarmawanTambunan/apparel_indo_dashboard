@@ -65,6 +65,7 @@ const props = defineProps<{
 const filteredUser = ref<User[]>([...props.users]);
 const fileRiwayatDataDesain = ref<HTMLInputElement | null>(null);
 const selectRiwayatDataDesain = ref<RiwayatDataDesain | null>(null);
+const previewURL = ref<string | null>(null);
 
 console.log(props.data_desain.user_nama);
 
@@ -103,8 +104,12 @@ const submitDataDesain = () => {
         preserveScroll: true,
         preserveState: true,
         onSuccess: () => {
+
             formDataDesain.reset('riwayat_data_desain_id', 'keterangan', 'keterangan', 'feedback', 'file_riwayat_data_desain');
-            if (fileRiwayatDataDesain.value) fileRiwayatDataDesain.value.value = '';
+            if (fileRiwayatDataDesain.value){
+                previewURL.value = null;
+                fileRiwayatDataDesain.value.value = '';
+            }
             formDataDesain.clearErrors();
         },
         onError: (errors) => {
@@ -130,11 +135,8 @@ function onFileChangeRiwayatDataDesain(event: Event) {
       return;
     }
     formDataDesain.file_riwayat_data_desain = file;
+    previewURL.value = URL.createObjectURL(file);
   }
-}
-
-function getObjectURL(file: File) {
-  return URL.createObjectURL(file);
 }
 // END HANDLE FILE
 
@@ -261,9 +263,9 @@ watch(selectRiwayatDataDesain, (newVal) => {
                         />
                         <span v-if="formDataDesain.errors.file_riwayat_data_desain" class="text-red-500 text-sm">{{ formDataDesain.errors.file_riwayat_data_desain }}</span>
                     </div>
-                    <div v-if="formDataDesain.file_riwayat_data_desain">
+                    <div v-if="previewURL">
                         <p class="font-medium mb-2">Preview File:</p>
-                        <iframe :src="getObjectURL(formDataDesain.file_riwayat_data_desain)" class="w-full h-64 border rounded"></iframe>
+                        <iframe :src="previewURL" class="w-full h-64 border rounded"></iframe>
                     </div>
                 </div>
                 <div class="mt-6 flex flex-wrap justify-end gap-2">
