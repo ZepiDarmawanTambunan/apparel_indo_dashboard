@@ -19,10 +19,21 @@ return new class extends Migration
             $table->unsignedBigInteger('status_id');
             $table->string('user_nama')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('total_bayar_sebelumnya')->default(0);
-            $table->unsignedBigInteger('total_bayar_sekarang')->default(0);
+            
+            $table->unsignedBigInteger('sub_total')->default(0);
+            $table->unsignedBigInteger('diskon')->default(0);
+            $table->unsignedBigInteger('lainnya')->default(0);
+            $table->unsignedBigInteger('total')->default(0);
+            
+            $table->unsignedBigInteger('bayar')->default(0);
+            $table->unsignedBigInteger('kembalian')->default(0);
+            
+            $table->unsignedBigInteger('sisa_bayar_sblm_pembayaran')->default(0);
+            $table->unsignedBigInteger('total_pembayaran_sblm_pembayaran')->default(0);
+
             $table->unsignedBigInteger('sisa_bayar')->default(0);
-            $table->text('keterangan')->nullable();
+            $table->unsignedBigInteger('total_pembayaran')->default(0);
+            
             $table->timestamps();
             $table->softDeletes();
 
