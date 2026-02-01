@@ -98,29 +98,24 @@ function submit(status: 'batal' | 'selesai') {
           <div><span class="font-semibold">Status Invoice:</span> {{ invoice.status.nama }}</div>
         </div>
 
-        <div>
-          <h3 class="font-semibold mb-2">Item:</h3>
-          <div class="border rounded">
-            <table class="w-full text-sm">
-              <thead class="bg-gray-100 text-left">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-100 text-left">
                 <tr>
-                  <th class="p-2">Produk</th>
-                  <th class="p-2 text-center">Qty</th>
-                  <th class="p-2 text-right">Harga</th>
-                  <th class="p-2 text-right">Subtotal</th>
+                    <th class="p-2">Produk</th>
+                    <th class="p-2 text-center">Qty</th>
+                    <th class="p-2 text-right">Harga</th>
+                    <th class="p-2 text-right">Subtotal</th>
                 </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
                 <tr v-for="item in order.order_detail" :key="item.id" class="border-t">
-                  <td class="p-2">{{ item.nama }}</td>
-                  <td class="p-2 text-center">{{ item.qty }}</td>
-                  <td class="p-2 text-right">Rp. {{ item.harga.toLocaleString() }}</td>
-                  <td class="p-2 text-right">Rp. {{ (item.harga * item.qty).toLocaleString() }}</td>
+                    <td class="p-2">{{ item.nama }}</td>
+                    <td class="p-2 text-center">{{ item.qty }}</td>
+                    <td class="p-2 text-right">Rp. {{ item.harga.toLocaleString() }}</td>
+                    <td class="p-2 text-right">Rp. {{ (item.harga * item.qty).toLocaleString() }}</td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+            </tbody>
+        </table>
 
         <!-- ✅ Tambahan Produk -->
         <div v-if="order.order_detail.some(d => d.order_tambahan.length)" class="mt-4">

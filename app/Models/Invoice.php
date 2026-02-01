@@ -24,8 +24,19 @@ class Invoice extends Model
         'user_nama',
         'user_id',
         'keterangan',
-        'total_bayar_sebelumnya',
-        'total_bayar_sekarang',
+
+        'sub_total',
+        'diskon',
+        'lainnya',
+        'total',
+
+        'bayar',
+        'kembalian',
+
+        'total_pembayaran_sblmnya',
+        'sisa_bayar_sblmnya',
+
+        'total_pembayaran',
         'sisa_bayar',
     ];
 
@@ -53,6 +64,11 @@ class Invoice extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function invoiceDetail()
+    {
+        return $this->hasMany(InvoiceDetail::class, 'invoice_id', 'id_invoice');
     }
     // END RELASI
 

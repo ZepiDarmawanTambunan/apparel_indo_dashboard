@@ -136,8 +136,6 @@ class PembayaranController extends Controller
             $diskon = $order->diskon;
             $lainnya = $order->lainnya;
             $total = $order->total;
-            $sisa_bayar_sblm_pembayaran = $order->sisa_bayar;
-            $total_pembayaran_sblm_pembayaran = $order->total_pembayaran;
 
             // Create pembayaran
             $pembayaran = Pembayaran::create([
@@ -173,10 +171,10 @@ class PembayaranController extends Controller
                 'bayar' => $validated['bayar'],
                 'kembalian' => $validated['kembalian'],
 
-                'sisa_bayar_sblm_pembayaran' => $sisa_bayar_sblm_pembayaran,
-                'total_pembayaran_sblm_pembayaran' => $total_pembayaran_sblm_pembayaran,
+                'total_pembayaran_sblmnya' => $order->total_pembayaran,
+                'sisa_bayar_sblmnya' => $order->sisa_bayar,
 
-                'sisa_bayar' => $order->sisa_bayar,
+                'sisa_bayar' => $order->sisa_bayar - ($validated['bayar'] - $validated['kembalian']),
                 'total_pembayaran' => $totalPembayaranBaru,
             ]);
 
@@ -420,34 +418,5 @@ class PembayaranController extends Controller
         }
 
         return 'INV' . str_pad($newIdInvoice, 5, '0', STR_PAD_LEFT);
-    }
-
-    protected function mapStatusOrder($pembayaranTerakhirKategori, $orderStatusSekarang)
-    {
-        return match ($pembayaranTerakhirKategori) {
-            'DP Awal' => match ($orderStatusSekarang) {
-                'Cetak & Print',
-                'Press Kain',
-                'Cutting Kain',
-                'Jahit',
-                'Sablon & Press Kecil',
-                'QC',
-                'Packaging',
-                'Menunggu Tagihan Lunas' => Kategori::getKategoriId('Status Order', $orderStatusSekarang),
-                default => Kategori::getKategoriId('Status Order', 'Data Desain'),
-            },
-            'DP Produksi' => match ($orderStatusSekarang) {
-                'Cetak & Print',
-                'Press Kain',
-                'Cutting Kain',
-                'Jahit',
-                'Sablon & Press Kecil',
-                'QC',
-                'Packaging',
-                'Menunggu Tagihan Lunas' => Kategori::getKategoriId('Status Order', $orderStatusSekarang),
-                default => Kategori::getKategoriId('Status Order', 'Menunggu Tagihan Lunas'),
-            },
-            default => Kategori::getKategoriId('Status Order', 'Menunggu DP Awal'),
-        };
     }
 }

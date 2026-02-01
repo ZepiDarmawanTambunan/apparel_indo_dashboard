@@ -80,7 +80,7 @@
   </div>
 
   <div>
-    <p><strong>Nama Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
+    <p><strong>Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
     <p><strong>Tgl Bayar:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
     <p>
         <strong>Jenis Invoice:</strong>
@@ -92,7 +92,6 @@
   </div>
 
   <div class="mt-2">
-    <strong>Item Produk:</strong>
     <table>
       <thead>
         <tr>
@@ -124,7 +123,7 @@
   @endphp
 
   <div class="mt-2">
-    <strong>Tambahan:</strong>
+    <strong>Tambahan: </strong>
     <ul>
         @forelse (collect($invoice->order->orderDetail ?? [])->pluck('orderTambahan')->flatten() as $tambahan)
             @if ($tambahan)
@@ -137,55 +136,26 @@
   </div>
 
   <div class="mt-2">
-    <p><strong>Keterangan:</strong> {{ optional($invoice->order)->keterangan ?? '-' }}</p>
+    <strong>Keterangan:</strong> <br>{{ optional($invoice->order)->keterangan ?? '-' }}
   </div>
-
-  @php
-    $orderDetail = optional($invoice->order)->orderDetail ?? collect();
-    $subTotal = $orderDetail->sum(fn($i) => $i->qty * $i->harga);
-    $lainnya = optional($invoice->order)->lainnya ?? 0;
-    $diskon = optional($invoice->order)->diskon ?? 0;
-
-    // Total harga fix
-    $total = $subTotal + $lainnya - $diskon;
-
-    // Pembayaran sekarang
-    $bayarSekarang = optional($invoice->pembayaran)->bayar ?? 0;
-    $kembalian = optional($invoice->pembayaran)->kembalian ?? 0;
-
-    // semua pembayaran yang tidak batal
-    $semuaPembayaran = ($invoice->order->pembayaran ?? collect())
-        ->filter(fn($p) => optional($p->status)->nama !== 'Batal');
-
-    // pembayaran sebelum invoice ini
-    $pembayaranSebelumnya = $semuaPembayaran
-        ->where('created_at', '<', $invoice->pembayaran->created_at)
-        ->sum(fn($p) => $p->bayar - $p->kembalian);
-
-    // Tentukan total bayar saat invoice ini dibuat
-    $totalBayarSebelumnyaSekarang = $pembayaranSebelumnya + $bayarSekarang;
-
-    // Sisa bayar saat invoice ini dibuat
-    $sisaBayarFinal = max($total - $totalBayarSebelumnyaSekarang, 0);
-  @endphp
 
     <div class="mt-2">
         <table>
             <tr>
                 <td><strong>Sub Total</strong></td>
-                <td class="text-right">Rp. {{ number_format($subTotal, 0, ',', '.') }}</td>
+                <td class="text-right">Rp. {{ number_format($invoice->sub_total, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td><strong>Lainnya</strong></td>
-                <td class="text-right">Rp. {{ number_format($lainnya, 0, ',', '.') }}</td>
+                <td class="text-right">Rp. {{ number_format($invoice->lainnya, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td><strong>Diskon</strong></td>
-                <td class="text-right">- Rp. {{ number_format($diskon, 0, ',', '.') }}</td>
+                <td class="text-right">- Rp. {{ number_format($invoice->diskon, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td class="text-right">Rp. {{ number_format($total, 0, ',', '.') }}</td>
+                <td class="text-right">Rp. {{ number_format($invoice->total, 0, ',', '.') }}</td>
             </tr>
         </table>
     </div>
@@ -193,25 +163,16 @@
     <div class="mt-2">
         <table>
             <tr>
-                <td><strong>Bayar Sekarang</strong></td>
-                <td class="text-right">Rp. {{ number_format($bayarSekarang, 0, ',', '.') }}</td>
+                <td><strong>Sisa Tagihan Sebelumnya</strong></td>
+                <td class="text-right">Rp. {{ number_format($invoice->sisa_bayar_sblmnya, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td><strong>Kembalian</strong></td>
-                <td class="text-right">Rp. {{ number_format($kembalian, 0, ',', '.') }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="mt-2">
-        <table>
-            <tr>
-                <td><strong>T. Bayar Sebelumnya + Bayar Sekarang</strong></td>
-                <td class="text-right">Rp. {{ number_format($totalBayarSebelumnyaSekarang, 0, ',', '.') }}</td>
+                <td><strong>Total Terbayar s.d. Saat Ini</strong></td>
+                <td class="text-right">Rp. {{ number_format($invoice->total_pembayaran, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td><strong>Sisa Bayar Akhir</strong></td>
-                <td class="text-right">Rp. {{ number_format($sisaBayarFinal, 0, ',', '.') }}</td>
+                <td><strong>Sisa Tagihan Akhir</strong></td>
+                <td class="text-right">Rp. {{ number_format($invoice->sisa_bayar, 0, ',', '.') }}</td>
             </tr>
         </table>
     </div>

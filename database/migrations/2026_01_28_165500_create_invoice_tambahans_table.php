@@ -11,9 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_tambahans', function (Blueprint $table) {
+        Schema::create('invoice_tambahan', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('invoice_detail_id');
+            $table->string('nama');
+            $table->string('kategori');
+            $table->string('satuan');
+            $table->unsignedInteger('qty')->default(0);
+            $table->unsignedInteger('harga')->default(0);
+            $table->unsignedBigInteger('total')->default(0);
+            $table->string('user_nama')->nullable();
             $table->timestamps();
+
+            $table->foreign('invoice_detail_id')->references('id')->on('invoice_detail')->onDelete('cascade');
         });
     }
 
@@ -22,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_tambahans');
+        Schema::dropIfExists('invoice_tambahan');
     }
 };

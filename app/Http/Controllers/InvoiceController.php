@@ -61,8 +61,6 @@ class InvoiceController extends Controller
             $invoice = Invoice::with([
                 'order',
                 'order.dataDesain.status',
-                // 'order.qc.status',
-                // 'order.packaging.status',
                 'pembayaran'
             ])->findOrFail($id_invoice);
             $statusNama = $validated['status'] === 'batal' ? 'Batal' : 'Selesai';
@@ -166,20 +164,5 @@ class InvoiceController extends Controller
         $pdf = Pdf::loadView('exports.invoice-pdf', compact('invoice'))
         ->setPaper('a3', 'portrait');;
         return $pdf->stream("invoice-{$invoice->id_invoice}.pdf");
-    }
-
-    protected function mapStatusOrder($pembayaranTerakhirKategori, $orderStatusSekarang)
-    {
-        return match ($pembayaranTerakhirKategori) {
-            'DP Awal' => match ($orderStatusSekarang) {
-                'Proses Produksi', 'QC', 'Packaging', 'Menunggu Tagihan Lunas' => Kategori::getKategoriId('Status Order', $orderStatusSekarang),
-                default => Kategori::getKategoriId('Status Order', 'Menunggu Desain'),
-            },
-            'DP Produksi' => match ($orderStatusSekarang) {
-                'Proses Produksi', 'QC', 'Packaging', 'Menunggu Tagihan Lunas' => Kategori::getKategoriId('Status Order', $orderStatusSekarang),
-                default => Kategori::getKategoriId('Status Order', 'Menunggu Tagihan Lunas'),
-            },
-            default => Kategori::getKategoriId('Status Order', 'Menunggu DP Awal'),
-        };
     }
 }
