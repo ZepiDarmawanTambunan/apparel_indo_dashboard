@@ -102,7 +102,7 @@
         </tr>
       </thead>
       <tbody>
-        @forelse ($invoice->order->orderDetail ?? [] as $item)
+        @forelse ($invoice->invoiceDetail ?? [] as $item)
           <tr>
             <td>{{ $item->nama }}</td>
             <td>{{ $item->qty }}</td>
@@ -118,14 +118,10 @@
     </table>
   </div>
 
-  @php
-    $orderDetails = collect($invoice->order->orderDetail ?? []);
-  @endphp
-
   <div class="mt-2">
     <strong>Tambahan: </strong>
     <ul>
-        @forelse (collect($invoice->order->orderDetail ?? [])->pluck('orderTambahan')->flatten() as $tambahan)
+        @forelse (collect($invoice->invoiceDetail ?? [])->pluck('invoiceTambahan')->flatten() as $tambahan)
             @if ($tambahan)
                 <li>{{ $tambahan->nama }} - {{ $tambahan->qty }} qty - Rp. {{ number_format($tambahan->total, 0, ',', '.') }}</li>
             @endif
@@ -163,15 +159,24 @@
     <div class="mt-2">
         <table>
             <tr>
-                <td><strong>Sisa Tagihan Sebelumnya</strong></td>
-                <td class="text-right">Rp. {{ number_format($invoice->sisa_bayar_sblmnya, 0, ',', '.') }}</td>
+                <td><strong>Total Pembayaran Sebelumnya</strong></td>
+                <td class="text-right">Rp. {{ number_format($invoice->total_pembayaran_sblmnya, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td><strong>Total Terbayar s.d. Saat Ini</strong></td>
+                <td><strong>Sisa Pembayaran Sebelumnya</strong></td>
+                <td class="text-right">Rp. {{ number_format($invoice->sisa_bayar_sblmnya, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+    </div>
+
+      <div class="mt-2">
+        <table>
+            <tr>
+                <td><strong>Total Pembayaran Akhir</strong></td>
                 <td class="text-right">Rp. {{ number_format($invoice->total_pembayaran, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td><strong>Sisa Tagihan Akhir</strong></td>
+                <td><strong>Sisa Pembayaran Akhir</strong></td>
                 <td class="text-right">Rp. {{ number_format($invoice->sisa_bayar, 0, ',', '.') }}</td>
             </tr>
         </table>

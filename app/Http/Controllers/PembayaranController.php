@@ -174,8 +174,8 @@ class PembayaranController extends Controller
                 'total_pembayaran_sblmnya' => $order->total_pembayaran,
                 'sisa_bayar_sblmnya' => $order->sisa_bayar,
 
-                'sisa_bayar' => $order->sisa_bayar - ($validated['bayar'] - $validated['kembalian']),
                 'total_pembayaran' => $totalPembayaranBaru,
+                'sisa_bayar' => $order->sisa_bayar - ($validated['bayar'] - $validated['kembalian']),
             ]);
 
             // Update order

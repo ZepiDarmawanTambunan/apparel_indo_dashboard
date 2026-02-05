@@ -28,11 +28,11 @@ return new class extends Migration
             $table->unsignedBigInteger('bayar')->default(0);
             $table->unsignedBigInteger('kembalian')->default(0);
 
-            $table->unsignedBigInteger('sisa_bayar_sblmnya')->default(0);
             $table->unsignedBigInteger('total_pembayaran_sblmnya')->default(0);
+            $table->unsignedBigInteger('sisa_bayar_sblmnya')->default(0);
 
-            $table->unsignedBigInteger('sisa_bayar')->default(0);
             $table->unsignedBigInteger('total_pembayaran')->default(0);
+            $table->unsignedBigInteger('sisa_bayar')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

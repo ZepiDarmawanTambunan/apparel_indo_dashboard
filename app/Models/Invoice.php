@@ -33,11 +33,11 @@ class Invoice extends Model
         'bayar',
         'kembalian',
 
-        'total_pembayaran_sblmnya',
         'sisa_bayar_sblmnya',
+        'total_pembayaran_sblmnya',
 
-        'total_pembayaran',
         'sisa_bayar',
+        'total_pembayaran',
     ];
 
     // START RELASI
