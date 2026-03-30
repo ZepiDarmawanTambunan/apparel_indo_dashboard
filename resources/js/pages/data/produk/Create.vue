@@ -204,14 +204,14 @@ const parseCurrency = (value: string): number => {
           </div>
 
           <div>
-            <label class="block mb-1 font-medium">Parent Produk (jika ada)</label>
+            <label class="block mb-1 font-medium">Induk Produk (jika ada)</label>
             <Select
                 v-model="form.parent_id"
                 :options="props.produks"
                 filter
                 optionLabel="nama"
                 optionValue="id_produk"
-                placeholder="Pilih parent"
+                placeholder="Pilih induk produk"
                 :disabled="props.produks.length === 0"
                 class="w-full"
                 />

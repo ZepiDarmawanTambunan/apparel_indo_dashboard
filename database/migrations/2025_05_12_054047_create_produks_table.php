@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->unsignedInteger('harga')->default(0);
             $table->unsignedInteger('stok')->default(0);
-            $table->unsignedBigInteger('kategori_id')->nullable();
-            $table->unsignedBigInteger('satuan_id')->nullable();
+            $table->unsignedBigInteger('kategori_id')->nullable(); // kaos, kemeja, jaket
+            $table->unsignedBigInteger('satuan_id')->nullable(); // paket,pcs, lusin
             $table->string('parent_id', 8)->nullable();
             $table->timestamps();
             $table->softDeletes();

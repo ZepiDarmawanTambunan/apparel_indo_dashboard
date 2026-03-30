@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedInteger('harga')->default(0);
             $table->unsignedBigInteger('total')->default(0);
             $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable(); // kasir, superadmin
             $table->timestamps();
             $table->softDeletes();
 

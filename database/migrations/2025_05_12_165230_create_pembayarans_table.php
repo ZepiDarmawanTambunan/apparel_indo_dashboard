@@ -16,17 +16,17 @@ return new class extends Migration
             $table->string('order_id');
             $table->unsignedBigInteger('bayar')->default(0);
             $table->unsignedBigInteger('kembalian')->default(0);
-            $table->unsignedBigInteger('kategori_id');
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('kategori_id');  // dp awal, dp produksi, lunas
+            $table->unsignedBigInteger('status_id'); // batal, terima
             $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable(); // kasir, superadmin
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('order_id')->references('id_order')->on('order')->onDelete('cascade');
-            $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade'); // dp awal, dp produksi, lunas
-            $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade'); // batal, terima
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null'); // kasir, superadmin
+            $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
+            $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

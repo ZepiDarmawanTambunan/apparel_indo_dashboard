@@ -15,10 +15,10 @@ return new class extends Migration
             $table->string('id_invoice', 8)->primary();
             $table->string('order_id');
             $table->string('pembayaran_id');
-            $table->unsignedBigInteger('kategori_id');
+            $table->unsignedBigInteger('kategori_id'); // dp awal, dp produksi, lunas
             $table->unsignedBigInteger('status_id');
             $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable(); // kasir, superadmin
 
             $table->unsignedBigInteger('sub_total')->default(0);
             $table->unsignedBigInteger('diskon')->default(0);

@@ -171,7 +171,7 @@ const parseCurrency = (value: string): number => {
           </div>
 
           <div>
-            <label class="block mb-1 font-medium">Parent Produk (jika ada)</label>
+            <label class="block mb-1 font-medium">Induk Produk (jika ada)</label>
             <Select
               v-model="form.parent_id"
               :options="props.produks"
@@ -179,7 +179,7 @@ const parseCurrency = (value: string): number => {
               filter
               optionLabel="nama"
               optionValue="id_produk"
-              placeholder="Pilih parent"
+              placeholder="Pilih induk produk"
               class="w-full"
             />
             <span v-if="form.errors.parent_id" class="text-red-500 text-sm">{{ form.errors.parent_id }}</span>

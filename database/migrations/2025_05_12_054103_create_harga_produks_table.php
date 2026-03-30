@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('harga_after');
             $table->dateTime('tgl_jam');
             $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable(); // kasir, superadmin
             $table->softDeletes();
 
             $table->foreign('produk_id')->references('id_produk')->on('produk')->onDelete('cascade');
