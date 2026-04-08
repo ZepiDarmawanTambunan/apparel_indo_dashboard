@@ -24,7 +24,6 @@ class StatusCetakPrintSeeder extends Seeder
             'Belum Diterima',
             'Proses',
             'Selesai',
-            'Batal',
         ];
 
         foreach ($statuses as $status) {

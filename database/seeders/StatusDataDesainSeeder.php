@@ -22,10 +22,7 @@ class StatusDataDesainSeeder extends Seeder
         $statuses = [
             'Belum Diterima',
             'Proses',
-            'Menunggu Feedback',
-            'Revisi',
             'Selesai',
-            'Batal',
         ];
 
         foreach ($statuses as $status) {

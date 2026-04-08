@@ -74,8 +74,6 @@ Route::middleware(['auth', 'permission:akses-order'])
         Route::post('/', [PembayaranController::class, 'store'])->name('store');
 
         Route::get('/{id_pembayaran}', [PembayaranController::class, 'show'])->name('show');
-        Route::get('/{id_pembayaran}/edit', [PembayaranController::class, 'edit'])->name('edit');
-        Route::put('/{id_pembayaran}', [PembayaranController::class, 'update'])->name('update');
         Route::put('{id_pembayaran}/batal', [PembayaranController::class, 'batal'])->name('batal');
         Route::delete('/{id_pembayaran}', [PembayaranController::class, 'destroy'])->name('destroy');
 });

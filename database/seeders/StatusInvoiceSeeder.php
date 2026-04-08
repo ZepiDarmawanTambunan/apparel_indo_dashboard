@@ -24,7 +24,6 @@ class StatusInvoiceSeeder extends Seeder
             'Proses',
             'Selesai',
             'Batal',
-            'Tolak',
         ];
 
         foreach ($statusInvoice as $status) {

@@ -17,10 +17,10 @@ class CetakPrint extends Model implements HasMedia
     protected $table = 'cetak_print';
 
     protected $fillable = [
+        'order_id',
         'tgl_terima',
         'tgl_selesai',
         'tgl_batal',
-        'order_id',
         'status_id',
         'user_id',
         'user_nama',

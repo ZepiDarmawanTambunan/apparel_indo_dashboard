@@ -86,7 +86,6 @@ class RolePermissionSeeder extends Seeder
             'akses-pembayaran',
             'buat-pembayaran',
             'batal-pembayaran',
-            // 'akses-invoice',
             'akses-gudang'
         ]);
 
@@ -95,7 +94,6 @@ class RolePermissionSeeder extends Seeder
             'akses-monitoring',
             'akses-order',
             'edit-order',
-            // 'akses-invoice',
             'akses-desain-data',
             'akses-gudang'
         ]);
@@ -104,7 +102,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-cetak-print',
             'akses-gudang'
         ]);
@@ -113,7 +110,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-press-kain',
             'akses-gudang'
         ]);
@@ -122,7 +118,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-cutting-kain',
             'akses-gudang'
         ]);
@@ -131,7 +126,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-jahit',
             'akses-gudang'
         ]);
@@ -140,7 +134,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-sablon-press-kecil',
             'akses-gudang'
         ]);
@@ -149,7 +142,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-quality-control',
             'akses-gudang'
         ]);
@@ -158,7 +150,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-packaging',
             'akses-gudang'
         ]);
@@ -167,7 +158,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-checking',
             'akses-gudang'
         ]);
@@ -176,7 +166,6 @@ class RolePermissionSeeder extends Seeder
             'akses-dashboard',
             'akses-monitoring',
             'akses-order',
-            // 'akses-invoice',
             'akses-gudang'
         ]);
     }

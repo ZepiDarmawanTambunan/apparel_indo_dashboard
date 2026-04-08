@@ -82,10 +82,6 @@ class DesainDataController extends Controller
             $statusProsesId = Kategori::getKategoriId('Status Data Desain', 'Proses');
             $statusSelesaiId = Kategori::getKategoriId('Status Data Desain', 'Selesai');
 
-            // if ($order && $order->prosesKerjaTerakhir() != 'Data Desain') {
-            //     throw new \Exception('Batalkan terlebih dahulu proses kerja terakhir (' . $order->prosesKerjaTerakhir() . ') sebelum membatalkan Data Desain.');
-            // }
-
             if ($dataDesain->status_id == $statusProsesId) {
                 $dataDesain->update([
                     'status_id' => $statusBelumDiterimaId,
@@ -133,12 +129,6 @@ class DesainDataController extends Controller
         try {
             $dataDesain = DataDesain::findOrFail($id);
             $user = User::findOrFail($request->user_id);
-
-            // ✅ Update user_id di DataDesain
-            // $dataDesain->update([
-            //     'user_id' => $request->user_id,
-            //     'user_nama' => $user->nama,
-            // ]);
 
             if ($request->filled('riwayat_data_desain_id')) {
                 $riwayat = RiwayatDataDesain::findOrFail($request->riwayat_data_desain_id);
@@ -216,7 +206,7 @@ class DesainDataController extends Controller
             if($statusPembayaranOrder && in_array($statusPembayaranOrder->nama, ['DP Produksi', 'Lunas'])) {
                 $cetakPrintExists = CetakPrint::where('order_id', $order->id_order)->exists();
                 if (!$cetakPrintExists) {
-                    $statusCetakId = Kategori::getKategoriId('Status Cetak Print', 'Proses');
+                    $statusCetakId = Kategori::getKategoriId('Status Cetak Print', 'Belum Diterima');
                     CetakPrint::create([
                         'order_id' => $order->id_order,
                         'status_id' => $statusCetakId,

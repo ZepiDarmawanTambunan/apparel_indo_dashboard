@@ -81,6 +81,7 @@ class CetakPrintController extends Controller
             $cetakPrint = CetakPrint::with(['order'])->findOrFail($id);
             $order = $cetakPrint->order;
             $user = Auth::user();
+            $statusBelumDiterimaId = Kategori::getKategoriId('Status Cetak Print', 'Belum Diterima');
             $statusProsesId = Kategori::getKategoriId('Status Cetak Print', 'Proses');
             $statusSelesaiId = Kategori::getKategoriId('Status Cetak Print', 'Selesai');
 
@@ -88,7 +89,14 @@ class CetakPrintController extends Controller
             //     throw new \Exception('Batalkan terlebih dahulu proses kerja terakhir (' . $order->prosesKerjaTerakhir() . ') sebelum membatalkan Data Cetak.');
             // }
 
-            if($cetakPrint->status_id == $statusSelesaiId){
+            if($cetakPrint->status_id == $statusProsesId) {
+                $cetakPrint->update([
+                    'status_id' => $statusBelumDiterimaId,
+                    'tgl_batal' => now(),
+                    'user_id' => $user->id,
+                    'user_nama' => $user->nama,
+                ]);
+            } elseif($cetakPrint->status_id == $statusSelesaiId){
                 $cetakPrint->update([
                     'status_id' => $statusProsesId,
                     'tgl_batal' => now(),
@@ -175,7 +183,7 @@ class CetakPrintController extends Controller
 
             $pressKainExists = PressKain::where('order_id', $order->id_order)->exists();
             if (!$pressKainExists) {
-                $statusPressKainId = Kategori::getKategoriId('Status Press Kain', 'Proses');
+                $statusPressKainId = Kategori::getKategoriId('Status Press Kain', 'Belum Diterima');
                 PressKain::create([
                     'order_id' => $order->id_order,
                     'status_id' => $statusPressKainId,

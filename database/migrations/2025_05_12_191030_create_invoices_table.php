@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('order_id');
             $table->string('pembayaran_id');
             $table->unsignedBigInteger('kategori_id'); // dp awal, dp produksi, lunas
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('status_id'); // Batal, Proses, Selesai
             $table->string('user_nama')->nullable();
             $table->unsignedBigInteger('user_id')->nullable(); // kasir, superadmin
 
@@ -33,6 +33,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('total_pembayaran')->default(0);
             $table->unsignedBigInteger('sisa_bayar')->default(0);
+
+            $table->text('keterangan')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

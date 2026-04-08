@@ -13,21 +13,19 @@ return new class extends Migration
     {
         Schema::create('riwayat_data_desain', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('data_desain_id')->nullable();
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('data_desain_id')->nullable();
-            $table->boolean('is_active')->default(true);
+
             $table->dateTime('tgl_feedback')->nullable();
             $table->text('keterangan')->nullable();
             $table->text('feedback')->nullable();
-            $table->unsignedBigInteger('jumlah_dikerjakan')->default(0);
 
             $table->foreign('data_desain_id')->references('id')->on('data_desain')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
 
             $table->softDeletes();
-
             $table->timestamps();
         });
     }

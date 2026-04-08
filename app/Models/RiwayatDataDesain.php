@@ -17,9 +17,9 @@ class RiwayatDataDesain extends Model implements HasMedia
     protected $table = 'riwayat_data_desain';
 
     protected $fillable = [
+        'data_desain_id',
         'user_id',
         'user_nama',
-        'data_desain_id',
         'tgl_feedback',
         'keterangan',
         'feedback',

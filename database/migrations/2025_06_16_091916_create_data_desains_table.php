@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('data_desain', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id');
 
             $table->dateTime('tgl_terima')->nullable();
             $table->dateTime('tgl_selesai')->nullable();
             $table->dateTime('tgl_batal')->nullable();
             $table->unsignedBigInteger('jumlah_dikerjakan')->default(0);
 
-            $table->string('order_id');
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('status_id'); // belum diterima, proses, selesai
             $table->string('user_nama')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
 
