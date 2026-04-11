@@ -34,8 +34,6 @@ return new class extends Migration
             $table->unsignedBigInteger('total_pembayaran')->default(0);
             $table->unsignedBigInteger('sisa_bayar')->default(0);
 
-            $table->text('keterangan')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
 

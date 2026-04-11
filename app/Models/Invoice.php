@@ -23,19 +23,18 @@ class Invoice extends Model
         'status_id',
         'user_nama',
         'user_id',
-        'keterangan',
-
+        
         'sub_total',
         'diskon',
         'lainnya',
         'total',
-
+        
         'bayar',
         'kembalian',
-
+        
         'total_pembayaran_sblmnya',
         'sisa_bayar_sblmnya',
-
+        
         'total_pembayaran',
         'sisa_bayar',
     ];
