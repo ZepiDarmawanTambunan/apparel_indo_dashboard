@@ -89,7 +89,7 @@ class PembayaranController extends Controller
             $order = Order::lockForUpdate()->findOrFail($validated['order_id']);
             $user = Auth::user();
 
-            // CEK jika masih ada pembayaran yg belum ACC
+            // Cek jika masih ada pembayaran yg belum ACC
             $pendingPembayaran = Pembayaran::where('order_id', $order->id_order)
                 ->whereHas('status', function ($q) {
                     $q->where('nama', 'Menunggu ACC');
@@ -155,6 +155,8 @@ class PembayaranController extends Controller
                     ->toMediaCollection('bukti_pembayaran');
             }
 
+            dd($order->sisa_bayar);
+
             // Create invoice
             $invoice = Invoice::create([
                 'id_invoice' => $this->getNewIdInvoice(),
@@ -162,6 +164,9 @@ class PembayaranController extends Controller
                 'pembayaran_id' => $pembayaran->id_pembayaran,
                 'kategori_id' => $kategoriInvoiceId,
                 'status_id' => $statusInvoiceId,
+
+                'user_nama' => $user->nama,
+                'user_id' => $user->id,
 
                 'sub_total' => $sub_total,
                 'diskon' => $diskon,
