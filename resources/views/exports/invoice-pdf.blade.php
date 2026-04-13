@@ -66,6 +66,16 @@
     .mt-1 { margin-top: 10px; }
     .mt-2 { margin-top: 20px; }
     .mt-4 { margin-top: 40px; }
+
+    .invoice-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 30px;
+    }
+
+    .invoice-info p {
+        margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -79,17 +89,19 @@
     </div>
   </div>
 
-  <div>
-    <p><strong>Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
-    <p><strong>Tgl Bayar:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
-    <p>
-        <strong>Jenis Invoice:</strong>
-        <span style="color:red; font-weight:bold;">
-            {{ optional($invoice->kategori)->nama ?? '-' }}
-        </span>
-    </p>
-    <p><strong>Status:</strong> {{ optional($invoice->status)->nama ?? '-' }}</p>
-  </div>
+    <div class="invoice-info">
+        <p><strong>Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
+        <p><strong>Tgl Bayar:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
+
+        <p>
+            <strong>Jenis Invoice:</strong>
+            <span style="color:red; font-weight:bold;">
+                {{ optional($invoice->kategori)->nama ?? '-' }}
+            </span>
+        </p>
+
+        <p><strong>Status:</strong> {{ optional($invoice->status)->nama ?? '-' }}</p>
+    </div>
 
   <div class="mt-2">
     <table>

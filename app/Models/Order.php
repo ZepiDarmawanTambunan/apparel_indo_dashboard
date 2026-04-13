@@ -220,53 +220,53 @@ class Order extends Model
         $pembayaranLunas = $this->pembayaran()->where('kategori_id', $kategoriLunas)->with('status')->latest()->first();
 
         // GET KATEGORI SIKLUS ID
-        $statusDataDesainBatalId = Kategori::getKategoriId('Status Data Desain', 'Batal');
-        $statusCetakPrintBatalId = Kategori::getKategoriId('Status Cetak Print', 'Batal');
-        $statusPressKainBatalId = Kategori::getKategoriId('Status Press Kain', 'Batal');
-        $statusCuttingKainBatalId = Kategori::getKategoriId('Status Cutting Kain', 'Batal');
-        $statusJahitBatalId = Kategori::getKategoriId('Status Jahit', 'Batal');
-        $statusSablonPressBatalId = Kategori::getKategoriId('Status Sablon Press', 'Batal');
-        $statusQcBatalId = Kategori::getKategoriId('Status QC', 'Batal');
-        $statusPackagingBatalId = Kategori::getKategoriId('Status Packaging', 'Batal');
+        $statusDataDesainBelumDiterimaId = Kategori::getKategoriId('Status Data Desain', 'Belum Diterima');
+        $statusCetakPrintBelumDiterimaId = Kategori::getKategoriId('Status Cetak Print', 'Belum Diterima');
+        $statusPressKainBelumDiterimaId = Kategori::getKategoriId('Status Press Kain', 'Belum Diterima');
+        $statusCuttingKainBelumDiterimaId = Kategori::getKategoriId('Status Cutting Kain', 'Belum Diterima');
+        $statusJahitBelumDiterimaId = Kategori::getKategoriId('Status Jahit', 'Belum Diterima');
+        $statusSablonPressBelumDiterimaId = Kategori::getKategoriId('Status Sablon Press', 'Belum Diterima');
+        $statusQcBelumDiterimaId = Kategori::getKategoriId('Status QC', 'Belum Diterima');
+        $statusPackagingBelumDiterimaId = Kategori::getKategoriId('Status Packaging', 'Belum Diterima');
 
         // GET DATA SIKLUS
         $dataDesain = $this->dataDesain()
-            ->where('status_id', '!=', $statusDataDesainBatalId)
+            ->where('status_id', '!=', $statusDataDesainBelumDiterimaId)
             ->with('status')
             ->first();
 
         $cetakPrint = $this->cetakPrint()
-            ->where('status_id', '!=', $statusCetakPrintBatalId)
+            ->where('status_id', '!=', $statusCetakPrintBelumDiterimaId)
             ->with('status')
             ->first();
 
         $pressKain = $this->pressKain()
-            ->where('status_id', '!=', $statusPressKainBatalId)
+            ->where('status_id', '!=', $statusPressKainBelumDiterimaId)
             ->with('status')
             ->first();
 
         $cuttingKain = $this->cuttingKain()
-            ->where('status_id', '!=', $statusCuttingKainBatalId)
+            ->where('status_id', '!=', $statusCuttingKainBelumDiterimaId)
             ->with('status')
             ->first();
 
         $jahit = $this->jahit()
-            ->where('status_id', '!=', $statusJahitBatalId)
+            ->where('status_id', '!=', $statusJahitBelumDiterimaId)
             ->with('status')
             ->first();
 
         $sablonPress = $this->sablonPress()
-            ->where('status_id', '!=', $statusSablonPressBatalId)
+            ->where('status_id', '!=', $statusSablonPressBelumDiterimaId)
             ->with('status')
             ->first();
 
         $qc = $this->qc()
-            ->where('status_id', '!=', $statusQcBatalId)
+            ->where('status_id', '!=', $statusQcBelumDiterimaId)
             ->with('status')
             ->first();
 
         $packaging = $this->packaging()
-            ->where('status_id', '!=', $statusPackagingBatalId)
+            ->where('status_id', '!=', $statusPackagingBelumDiterimaId)
             ->with('status')
             ->first();
 
@@ -378,16 +378,16 @@ class Order extends Model
     public function prosesKerjaTerakhir()
     {
         // GET KATEGORI SIKLUS ID
-        $statusCetakPrintBatalId = Kategori::getKategoriId('Status Cetak Print', 'Batal');
-        $statusDataDesainBatalId = Kategori::getKategoriId('Status Data Desain', 'Batal');
+        $statusCetakPrintBelumDiterimaId = Kategori::getKategoriId('Status Cetak Print', 'Batal');
+        $statusDataDesainBelumDiterimaId = Kategori::getKategoriId('Status Data Desain', 'Batal');
 
         // GET DATA SIKLUS YANG BELUM BATAL
         $cetakPrint = $this->cetakPrint()
-            ->where('status_id', '!=', $statusCetakPrintBatalId)
+            ->where('status_id', '!=', $statusCetakPrintBelumDiterimaId)
             ->first();
 
         $dataDesain = $this->dataDesain()
-            ->where('status_id', '!=', $statusDataDesainBatalId)
+            ->where('status_id', '!=', $statusDataDesainBelumDiterimaId)
             ->first();
 
         if ($cetakPrint) return 'Cetak Print';

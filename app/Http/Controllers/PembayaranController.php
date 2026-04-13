@@ -100,11 +100,11 @@ class PembayaranController extends Controller
                 throw new \Exception('Masih ada antrian pembayaran yang belum diselesaikan.');
             }
 
-            // Hitung => order.total_pembayaran + (bayar - kembaliian)
+            // Jika order.total > 0 => order.total_pembayaran + (bayar - kembaliian)
             $totalPembayaranBaru = min($order->total_pembayaran + ($validated['bayar'] - $validated['kembalian']), $order->total);
 
-            // Jika order.total = 0 alias langsung dp awal
-            if($order->total == 0){
+            // Jika order.total <= 0
+            if($order->total <= 0){
                 $totalPembayaranBaru = $validated['bayar'] - $validated['kembalian'];
             }
 
@@ -112,7 +112,7 @@ class PembayaranController extends Controller
             $kategori = Kategori::findOrFail($validated['kategori_id']);
             $kategoriLunasId = Kategori::getKategoriId('Kategori Pembayaran', 'Lunas');
 
-            // Jika lunas maka totalPembayaranBaru >= order.total
+            // Jika totalPembayaranBaru < order.total
             if (strtolower($kategori->nama) === 'lunas' && $totalPembayaranBaru < $order->total) {
                 throw new \Exception('Jumlah pembayaran tidak mencukupi untuk melunasi order.');
             }
@@ -125,7 +125,7 @@ class PembayaranController extends Controller
             // Tentukan pembayaran.kategori && pembayaran.status
             $kategoriId = $order->total > 0 && $totalPembayaranBaru === $order->total
                 ? $kategoriLunasId
-                : $validated['kategori_id'];
+                : $kategori->id;
             $kategori = Kategori::findOrFail($kategoriId);
             $statusId = Kategori::getKategoriId('Status Pembayaran', 'Menunggu ACC');
 
@@ -175,7 +175,7 @@ class PembayaranController extends Controller
                 'sisa_bayar_sblmnya' => $order->sisa_bayar,
 
                 'total_pembayaran' => $totalPembayaranBaru,
-                'sisa_bayar' => $order->sisa_bayar - ($validated['bayar'] - $validated['kembalian']),
+                'sisa_bayar' => max(0, $order->sisa_bayar - ($validated['bayar'] - $validated['kembalian'])),
             ]);
 
             // Update order

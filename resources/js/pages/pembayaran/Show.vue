@@ -121,7 +121,6 @@ const formatCurrency = (value: number) => {
                 </div>
 
                 <div v-if="pembayaran.bukti_pembayaran" class="mt-8 space-y-2">
-                    <p class="text-sm text-gray-500">Bukti Pembayaran:</p>
                     <a
                         :href="pembayaran.bukti_pembayaran"
                         target="_blank"
