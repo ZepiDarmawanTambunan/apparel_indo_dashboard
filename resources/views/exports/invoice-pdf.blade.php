@@ -67,14 +67,15 @@
     .mt-2 { margin-top: 20px; }
     .mt-4 { margin-top: 40px; }
 
-    .invoice-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px 30px;
+    .invoice-info p {
+        margin: 2px 0;
+        line-height: 1.4;
+        font-size: 14px;
     }
 
-    .invoice-info p {
-        margin: 0;
+    .invoice-info strong {
+        display: inline-block;
+        width: 130px;
     }
   </style>
 </head>
@@ -90,17 +91,14 @@
   </div>
 
     <div class="invoice-info">
-        <p><strong>Pelanggan:</strong> {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
-        <p><strong>Tgl Bayar:</strong> {{ optional($invoice->order)->created_at ?? '-' }}</p>
-
+        <p><strong>Pelanggan</strong>: {{ optional($invoice->order)->nama_pelanggan ?? '-' }}</p>
+        <p><strong>Tgl Ambil</strong>: {{ optional($invoice->order)->tgl_deadline ?? '-' }}</p>
         <p>
-            <strong>Jenis Invoice:</strong>
+            <strong>Jenis Invoice</strong>:
             <span style="color:red; font-weight:bold;">
                 {{ optional($invoice->kategori)->nama ?? '-' }}
             </span>
         </p>
-
-        <p><strong>Status:</strong> {{ optional($invoice->status)->nama ?? '-' }}</p>
     </div>
 
   <div class="mt-2">
@@ -198,7 +196,7 @@
         <p><strong>Kasir:</strong> {{ optional($invoice->order)->user_nama ?? '-' }}</p>
 
         <p>
-            <strong>Waktu:</strong>
+            <strong>Waktu Invoice:</strong>
             {{ \Carbon\Carbon::now()->translatedFormat('d-m-Y - H:i:s') }}
         </p>
     </div>

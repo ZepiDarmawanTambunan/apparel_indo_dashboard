@@ -144,7 +144,7 @@ const formatCurrency = (value: number) => {
                         rel="noopener noreferrer"
                         class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700 transition"
                     >
-                        📄 Invoice
+                        🖨️
                     </a>
                     <button
                         v-if="pembayaran.status.nama !== 'Batal'"

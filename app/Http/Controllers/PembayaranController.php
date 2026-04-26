@@ -155,8 +155,6 @@ class PembayaranController extends Controller
                     ->toMediaCollection('bukti_pembayaran');
             }
 
-            dd($order->sisa_bayar);
-
             // Create invoice
             $invoice = Invoice::create([
                 'id_invoice' => $this->getNewIdInvoice(),

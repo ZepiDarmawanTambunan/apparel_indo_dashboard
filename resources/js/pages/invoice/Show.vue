@@ -170,7 +170,7 @@ function submit(status: 'batal' | 'selesai') {
           rel="noopener noreferrer"
           class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700 transition"
         >
-          📄 PDF
+          🖨️
         </a>
         <div v-if="invoice.status.nama === 'Proses'" class="flex flex-wrap justify-end gap-2 pt-6">
           <a
