@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import { defineProps, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { DataTable, Column, useConfirm, ConfirmDialog } from 'primevue';
 import { Head, router } from '@inertiajs/vue3';
 import { toast } from 'vue3-toastify';
@@ -17,7 +17,6 @@ interface Order {
   nama_pelanggan: string;
   tgl_deadline?: string | null;
   status: Kategori;
-  user_nama?: string | null;
 }
 
 interface DataDesain {
@@ -122,7 +121,7 @@ onMounted(() => {
           <Column field="order.id_order" header="ID" sortable />
           <Column field="order.nama_pelanggan" header="Pelanggan" sortable />
           <Column field="order.tgl_deadline" header="Deadline" sortable />
-          <Column field="user_nama" header="Petugas" sortable />
+          <Column field="accepted_by_name" header="Petugas" sortable />
           <Column field="status.nama" header="Status" sortable />
           <Column header="Aksi" :style="{ width: '260px' }">
             <template #body="{ data }">

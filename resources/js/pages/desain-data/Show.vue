@@ -29,8 +29,10 @@ interface DataDesain {
     id: number;
     order_id: string;
     status_id: number;
-    user_id?: number | null;
-    user_nama?: string | null;
+    accepted_by_id?: number | null;
+    accepted_name?: string | null;
+    updated_by_id?: number | null;
+    updated_by_name?: string | null;
     tgl_terima?: string | null;
     tgl_selesai?: string | null;
     tgl_batal?: string | null;
@@ -41,8 +43,10 @@ interface DataDesain {
 interface RiwayatDataDesain {
     id: number;
     data_desain_id: number;
-    user_id?: number | null;
-    user_nama?: string | null;
+    accepted_by_id?: number | null;
+    accepted_name?: string | null;
+    updated_by_id?: number | null;
+    updated_by_name?: string | null;
     tgl_feedback: string;
     keterangan: string | null;
     feedback: string | null;
@@ -67,19 +71,17 @@ const fileRiwayatDataDesain = ref<HTMLInputElement | null>(null);
 const selectRiwayatDataDesain = ref<RiwayatDataDesain | null>(null);
 const previewURL = ref<string | null>(null);
 
-console.log(props.data_desain.user_nama);
-
 // START HANDLE FORM & SUBMIT
 const formDataDesain = useForm<{
   _method: string;
-  user_id: number | null;
+  updated_by_id: number | null;
   riwayat_data_desain_id: string | null;
   keterangan: string | null;
   feedback: string | null;
   file_riwayat_data_desain: File | null;
 }>({
   _method: 'PUT',
-  user_id: props.data_desain.user_id ?? null,
+  updated_by_id: props.data_desain.updated_by_id ?? null,
   riwayat_data_desain_id: null,
   keterangan: null,
   feedback: null,
@@ -89,8 +91,7 @@ const formDataDesain = useForm<{
 const submitDataDesain = () => {
     const data = new FormData();
     data.append('_method', 'PUT');
-    data.append('user_id', String(formDataDesain.user_id));
-    console.log('user_id', formDataDesain.user_id);
+    data.append('updated_by_id', String(formDataDesain.updated_by_id));
     data.append('keterangan', String(formDataDesain.keterangan));
     data.append('feedback', String(formDataDesain.feedback));
     if(formDataDesain.riwayat_data_desain_id){
@@ -233,7 +234,7 @@ watch(selectRiwayatDataDesain, (newVal) => {
                     <div>
                     <label class="block mb-1 font-medium">Petugas</label>
                         <Select
-                            v-model="formDataDesain.user_id"
+                            v-model="formDataDesain.updated_by_id"
                             :options="filteredUser"
                             filter
                             optionLabel="nama"
@@ -242,7 +243,7 @@ watch(selectRiwayatDataDesain, (newVal) => {
                             :disabled="filteredUser.length === 0"
                             class="w-full"
                         />
-                        <span v-if="formDataDesain.errors.user_id" class="text-red-500 text-sm">{{ formDataDesain.errors.user_id }}</span>
+                        <span v-if="formDataDesain.errors.updated_by_id" class="text-red-500 text-sm">{{ formDataDesain.errors.updated_by_id }}</span>
                     </div>
                     <div>
                         <label class="block mb-1 font-medium">Keterangan</label>
@@ -313,7 +314,7 @@ watch(selectRiwayatDataDesain, (newVal) => {
                     </template>
                     <Column field="created_at" header="Tgl" />
                     <Column field="keterangan" header="Keterangan" />
-                    <Column field="user_nama" header="Petugas" />
+                    <Column field="accepted_by_name" header="Petugas" />
                     <Column field="tgl_feedback" header="Tgl Feedback" />
                     <Column field="feedback" header="Feedback" />
                     <Column field="file_url" header="File">

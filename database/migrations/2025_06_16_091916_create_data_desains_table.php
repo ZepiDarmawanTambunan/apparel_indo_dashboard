@@ -21,11 +21,14 @@ return new class extends Migration
             $table->unsignedBigInteger('jumlah_dikerjakan')->default(0);
 
             $table->unsignedBigInteger('status_id'); // belum diterima, proses, selesai
-            $table->string('user_nama')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('accepted_by_name')->nullable();
+            $table->unsignedBigInteger('accepted_by_id')->nullable();
+            $table->unsignedBigInteger('updated_by_name')->nullable();
+            $table->unsignedBigInteger('updated_by_id')->nullable();
 
             $table->foreign('order_id')->references('id_order')->on('order')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('accepted_by_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('updated_by_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('status_id')->references('id')->on('kategori')->onDelete('cascade'); // batal, pending, terima
 
             $table->softDeletes();

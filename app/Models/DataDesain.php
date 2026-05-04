@@ -17,8 +17,10 @@ class DataDesain extends Model
     protected $fillable = [
         'order_id',
         'status_id',
-        'user_id',
-        'user_nama',
+        'accepted_by_id',
+        'accepted_by_name',
+        'updated_by_id',
+        'updated_by_name',
         'tgl_terima',
         'tgl_selesai',
         'tgl_batal',
@@ -41,9 +43,14 @@ class DataDesain extends Model
         return $this->belongsTo(Kategori::class, 'status_id');
     }
 
-    public function user()
+    public function acceptedById()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'accepted_by_id');
+    }
+
+    public function updatedById()
+    {
+        return $this->belongsTo(User::class, 'updated_by_id');
     }
 
     public function riwayatDataDesain()

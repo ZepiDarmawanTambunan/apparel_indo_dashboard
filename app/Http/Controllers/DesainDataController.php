@@ -11,19 +11,33 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DesainDataController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index()
     {
         $breadcrumbs = [
             ['title' => 'Menu', 'href' => route('dashboard')],
             ['title' => 'Desain Data', 'href' => route('desain-data.index')],
         ];
-        $dataDesain = DataDesain::with(['order', 'status'])
-        ->whereNull('deleted_at')
-        ->orderBy('updated_at', 'DESC')
-        ->get();
+
+        $query = DataDesain::with(['order', 'status'])
+            ->whereNull('deleted_at');
+
+        if (!Auth::user()->hasRole('Super Admin')) {
+
+            $query->where(function ($q) {
+                $q->where('accepted_by_id', Auth::id())
+                ->orWhereNull('accepted_by_id');
+            });
+        }
+
+        $dataDesain = $query
+            ->orderBy('updated_at', 'DESC')
+            ->get();
 
         return Inertia::render('desain-data/Index', [
             'breadcrumbs' => $breadcrumbs,
@@ -38,6 +52,7 @@ class DesainDataController extends Controller
             ['title' => 'Desain Data', 'href' => route('desain-data.index')],
             ['title' => 'Detil', 'href' => route('desain-data.show', $id)],
         ];
+
         $dataDesain = DataDesain::with([
             'order.status',
             'order.statusPembayaran',
@@ -45,7 +60,10 @@ class DesainDataController extends Controller
             'riwayatDataDesain'
         ])->findOrFail($id);
 
+        $this->authorize('view', $dataDesain);
+
         $users = User::select('id', 'nama')->get();
+
         return Inertia::render('desain-data/Show', [
             'breadcrumbs' => $breadcrumbs,
             'data_desain' => $dataDesain,
@@ -58,15 +76,19 @@ class DesainDataController extends Controller
         $dataDesain = DataDesain::findOrFail($id);
         $user = Auth::user();
         $statusId = Kategori::getKategoriId('Status Data Desain', 'Proses');
+
+        $this->authorize('terima', $dataDesain);
+
         $dataDesain->update([
             'status_id' => $statusId,
             'tgl_terima' => now(),
-            'user_id' => $user->id,
-            'user_nama' => $user->nama,
+            'accepted_by_id' => $user->id,
+            'accepted_by_name' => $user->nama,
         ]);
+
         return redirect()->route('desain-data.index')->with('toast', [
             'type' => 'success',
-            'message' => 'Order berhasil diterima dan status diupdate.',
+            'message' => 'Order berhasil diterima.',
         ]);
     }
 
@@ -82,19 +104,25 @@ class DesainDataController extends Controller
             $statusProsesId = Kategori::getKategoriId('Status Data Desain', 'Proses');
             $statusSelesaiId = Kategori::getKategoriId('Status Data Desain', 'Selesai');
 
+            $this->authorize('batal', $dataDesain);
+
             if ($dataDesain->status_id == $statusProsesId) {
                 $dataDesain->update([
                     'status_id' => $statusBelumDiterimaId,
                     'tgl_batal' => now(),
-                    'user_id' => $user->id,
-                    'user_nama' => $user->nama,
+                    'accepted_by_id' => null,
+                    'accepted_by_name' => null,
+                    'updated_by_id' => $user->id,
+                    'updated_by_name' => $user->nama,
                 ]);
             } elseif ($dataDesain->status_id == $statusSelesaiId) {
                 $dataDesain->update([
                     'status_id' => $statusProsesId,
                     'tgl_batal' => now(),
-                    'user_id' => $user->id,
-                    'user_nama' => $user->nama,
+                    'accepted_by_id' => null,
+                    'accepted_by_name' => null,
+                    'updated_by_id' => $user->id,
+                    'updated_by_name' => $user->nama,
                 ]);
             }
 
@@ -107,7 +135,7 @@ class DesainDataController extends Controller
 
             return redirect()->route('desain-data.index')->with('toast', [
                 'type' => 'success',
-                'message' => 'Order berhasil dibatalkan dan status diupdate.',
+                'message' => 'Order berhasil dibatalkan.',
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -118,7 +146,7 @@ class DesainDataController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'updated_by_id' => 'required|exists:users,id',
             'keterangan' => 'nullable|string',
             'feedback' => 'nullable|string',
             'file_riwayat_data_desain' => 'nullable|file|mimes:pdf|max:10240',
@@ -128,14 +156,16 @@ class DesainDataController extends Controller
 
         try {
             $dataDesain = DataDesain::findOrFail($id);
-            $user = User::findOrFail($request->user_id);
+            $user = User::findOrFail($request->updated_by_id);
+
+            $this->authorize('update', $dataDesain);
 
             if ($request->filled('riwayat_data_desain_id')) {
                 $riwayat = RiwayatDataDesain::findOrFail($request->riwayat_data_desain_id);
 
                 $riwayat->update([
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
+                    'updated_by_id' => $request->updated_by_id,
+                    'updated_by_name' => $user->nama,
                     'tgl_feedback' => $request->filled('feedback') ? now() : null,
                     'keterangan' => $request->keterangan,
                     'feedback' => $request->feedback,
@@ -155,8 +185,8 @@ class DesainDataController extends Controller
                 // ✅ Buat riwayat baru
                 $riwayat = RiwayatDataDesain::create([
                     'data_desain_id' => $dataDesain->id,
-                    'user_id' => $request->user_id,
-                    'user_nama' => $user->nama,
+                    'updated_by_id' => $request->updated_by_id,
+                    'updated_by_nama' => $user->nama,
                     'tgl_feedback' => $request->filled('feedback') ? now() : null,
                     'keterangan' => $request->keterangan,
                     'feedback' => $request->feedback,
@@ -196,11 +226,13 @@ class DesainDataController extends Controller
             $statusPembayaranOrder = Kategori::where('id', $order->statusPembayaranOrderTerakhir())
             ->first();
 
+            $this->authorize('selesai', $dataDesain);
+
             $dataDesain->update([
                 'status_id' => $statusId,
                 'tgl_selesai' => now(),
-                'user_id' => $user->id,
-                'user_nama' => $user->nama,
+                'updated_by_id' => $user->id,
+                'updated_by_name' => $user->nama,
             ]);
 
             if($statusPembayaranOrder && in_array($statusPembayaranOrder->nama, ['DP Produksi', 'Lunas'])) {

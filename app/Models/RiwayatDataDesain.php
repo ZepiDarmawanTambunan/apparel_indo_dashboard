@@ -18,8 +18,10 @@ class RiwayatDataDesain extends Model implements HasMedia
 
     protected $fillable = [
         'data_desain_id',
-        'user_id',
-        'user_nama',
+        'accepted_by_id',
+        'accepted_by_name',
+        'updated_by_id',
+        'updated_by_name',
         'tgl_feedback',
         'keterangan',
         'feedback',
@@ -42,6 +44,16 @@ class RiwayatDataDesain extends Model implements HasMedia
     public function getFileUrlAttribute()
     {
         return $this->getFirstMediaUrl('file_riwayat_data_desain');
+    }
+
+    public function acceptedById()
+    {
+        return $this->belongsTo(User::class, 'accepted_by_id');
+    }
+
+    public function updatedById()
+    {
+        return $this->belongsTo(User::class, 'updated_by_id');
     }
 
     public function dataDesain()

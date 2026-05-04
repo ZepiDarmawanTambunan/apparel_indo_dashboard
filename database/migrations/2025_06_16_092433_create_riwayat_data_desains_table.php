@@ -15,15 +15,18 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('data_desain_id')->nullable();
 
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('user_nama')->nullable();
+            $table->string('accepted_by_name')->nullable();
+            $table->unsignedBigInteger('accepted_by_id')->nullable();
+            $table->unsignedBigInteger('updated_by_name')->nullable();
+            $table->unsignedBigInteger('updated_by_id')->nullable();
 
             $table->dateTime('tgl_feedback')->nullable();
             $table->text('keterangan')->nullable();
             $table->text('feedback')->nullable();
 
             $table->foreign('data_desain_id')->references('id')->on('data_desain')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('accepted_by_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('updated_by_id')->references('id')->on('users')->onDelete('set null');
 
             $table->softDeletes();
             $table->timestamps();
